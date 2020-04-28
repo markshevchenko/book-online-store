@@ -1,4 +1,6 @@
 ﻿using Store;
+using System;
+using System.Linq;
 
 namespace Data.Memory
 {
@@ -13,7 +15,8 @@ namespace Data.Memory
 
         public Book[] GetAllByTitle(string title)
         {
-            return books;
+            return books.Where(book => book.Title.ToLower().Contains(title.ToLower()))
+                        .ToArray();
         }
     }
 }
