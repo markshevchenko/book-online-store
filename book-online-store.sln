@@ -7,6 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "domain", "domain", "{D6FA81
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Store", "domain\Store\Store.csproj", "{A54DC8B4-FF48-485D-8A79-1941C071EADF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{68A528FC-B561-48F3-97FF-D3A5187D8DA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Memory", "infrastructure\Data.Memory\Data.Memory.csproj", "{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +36,21 @@ Global
 		{A54DC8B4-FF48-485D-8A79-1941C071EADF}.Release|x64.Build.0 = Release|Any CPU
 		{A54DC8B4-FF48-485D-8A79-1941C071EADF}.Release|x86.ActiveCfg = Release|Any CPU
 		{A54DC8B4-FF48-485D-8A79-1941C071EADF}.Release|x86.Build.0 = Release|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Debug|x64.Build.0 = Debug|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Debug|x86.Build.0 = Debug|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Release|x64.ActiveCfg = Release|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Release|x64.Build.0 = Release|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Release|x86.ActiveCfg = Release|Any CPU
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{A54DC8B4-FF48-485D-8A79-1941C071EADF} = {D6FA8155-EDCD-4706-BB3C-F7D1A40B2E23}
+		{2DA75FB3-08A5-4847-8AA4-9ADF1CD6C3CA} = {68A528FC-B561-48F3-97FF-D3A5187D8DA9}
 	EndGlobalSection
 EndGlobal
