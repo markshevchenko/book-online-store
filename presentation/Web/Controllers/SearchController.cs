@@ -18,7 +18,7 @@ namespace Web.Controllers
 
         public IActionResult Index(string query)
         {
-            var books = bookRepository.GetAllByTitle(query);
+            var books = bookRepository.GetAllByAuthorOrTitle(query);
 
             return View(books);
         }

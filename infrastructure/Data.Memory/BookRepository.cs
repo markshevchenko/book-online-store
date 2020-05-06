@@ -13,7 +13,7 @@ namespace Data.Memory
             new Book(3, "C Programming Language"),
         };
 
-        public Book[] GetAllByTitle(string title)
+        public Book[] GetAllByAuthorOrTitle(string title)
         {
             return books.Where(book => book.Title.ToLower().Contains(title.ToLower()))
                         .ToArray();
