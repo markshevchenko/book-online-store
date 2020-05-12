@@ -25,6 +25,8 @@ namespace Web
                 }
 
                 writer.Write(value.Amount);
+
+                session.Set(key, stream.ToArray());
             }
         }
 
