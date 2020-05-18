@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
 namespace Store
@@ -17,7 +16,6 @@ namespace Store
         public string Description { get; }
 
         public decimal Price { get; }
-
 
         public Book(int id, string isbn, string author, string title, string description, decimal price)
         {
