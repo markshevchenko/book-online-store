@@ -19,7 +19,7 @@
                 @{
                     if (Context.Session.TryGetCart(out Cart cart) && cart.TotalCount > 0)
                     {
-                        @:Товаров: @cart.TotalCount на сумму @cart.TotalAmount
+                        <a href="@Url.Action("Index", "Order")">Товаров: @cart.TotalCount на сумму @cart.TotalAmount</a>
                     }
                     else
                     {
