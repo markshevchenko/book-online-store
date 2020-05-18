@@ -8,7 +8,9 @@ namespace Web
 {
     public static class SessionExtensions
     {
-        public static void Set(this ISession session, string key, Cart value)
+        const string key = "Cart";
+
+        public static void Set(this ISession session, Cart value)
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
@@ -16,39 +18,30 @@ namespace Web
             using (var stream = new MemoryStream())
             using (var writer = new BinaryWriter(stream, Encoding.UTF8, true))
             {
-                writer.Write(value.Items.Count);
-
-                foreach (var item in value.Items)
-                {
-                    writer.Write(item.Key);
-                    writer.Write(item.Value);
-                }
-
-                writer.Write(value.Amount);
+                writer.Write(value.OrderId);
+                writer.Write(value.TotalCount);
+                writer.Write(value.TotalAmount);
 
                 session.Set(key, stream.ToArray());
             }
         }
 
-        public static bool TryGetCart(this ISession session, string key, out Cart value)
+        public static bool TryGetCart(this ISession session, out Cart value)
         {
             if (session.TryGetValue(key, out byte[] buffer))
             {
                 using (var stream = new MemoryStream(buffer))
                 using (var reader = new BinaryReader(stream, Encoding.UTF8, true))
                 {
-                    value = new Cart();
-                    var length = reader.ReadInt32();
+                    int orderId = reader.ReadInt32();
+                    int totalCount = reader.ReadInt32();
+                    decimal totalAmount = reader.ReadDecimal();
 
-                    for (int i = 0; i < length; i++)
+                    value = new Cart(orderId)
                     {
-                        var bookId = reader.ReadInt32();
-                        var count = reader.ReadInt32();
-
-                        value.Items.Add(bookId, count);
-                    }
-
-                    value.Amount = reader.ReadDecimal();
+                        TotalCount = totalCount,
+                        TotalAmount = totalAmount,
+                    };
                 }
 
                 return true;

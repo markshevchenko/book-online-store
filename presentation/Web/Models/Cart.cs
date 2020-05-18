@@ -1,11 +1,18 @@
-﻿using System.Collections.Generic;
-
-namespace Web.Models
+﻿namespace Web.Models
 {
     public class Cart
     {
-        public IDictionary<int, int> Items { get; set; } = new Dictionary<int, int>();
+        public int OrderId { get; }
 
-        public decimal Amount { get; set; }
+        public int TotalCount { get; set; }
+
+        public decimal TotalAmount { get; set; }
+
+        public Cart(int orderId)
+        {
+            OrderId = orderId;
+            TotalCount = 0;
+            TotalAmount = 0m;
+        }
     }
 }

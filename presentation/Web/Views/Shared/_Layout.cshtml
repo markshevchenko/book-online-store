@@ -16,20 +16,16 @@
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Искать</button>
             </form>
             <span class="navbar-text ml-auto">
-            @{
-                Cart cart;
-                if (!Context.Session.TryGetCart("Cart", out cart))
-                    cart = new Cart();
-
-                if (cart.Items.Count == 0)
-                {
-                    @:Корзина пуста
+                @{
+                    if (Context.Session.TryGetCart(out Cart cart) && cart.TotalCount > 0)
+                    {
+                        @:Товаров: @cart.TotalCount на сумму @cart.TotalAmount
+                    }
+                    else
+                    {
+                        @:Корзина пуста
+                    }
                 }
-                else
-                {
-                    @:Товаров: @cart.Items.Count на сумму @cart.Amount 
-                }
-            }
             </span>
         </nav>
     </header>
