@@ -33,6 +33,7 @@ namespace Web
             services.AddSingleton<IBookRepository, BookRepository>();
             services.AddSingleton<IOrderRepository, OrderRepository>();
             services.AddSingleton<BookService>();
+            services.AddSingleton<INotificationService, NotificationService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

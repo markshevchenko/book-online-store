@@ -14,6 +14,10 @@ namespace Store
             get { return items; }
         }
 
+        public OrderState State { get; private set; }
+
+        public string CellPhone { get; set; }
+
         public int TotalCount
         {
             get { return items.Sum(item => item.Count); }
@@ -24,9 +28,10 @@ namespace Store
             get { return items.Sum(item => item.Price * item.Count); }
         }
 
-        public Order(int id, IEnumerable<OrderItem> items)
+        public Order(int id, OrderState state, IEnumerable<OrderItem> items)
         {
             Id = id;
+            State = state;
             this.items = new List<OrderItem>(items);
         }
 
@@ -34,6 +39,8 @@ namespace Store
         {
             if (book == null)
                 throw new ArgumentNullException(nameof(book));
+
+            ValidateState(OrderState.Created);
             
             var item = items.SingleOrDefault(x => x.BookId == book.Id);
 
@@ -44,6 +51,19 @@ namespace Store
             }
             else
                 items.Add(new OrderItem(book.Id, book.Price, count));
+        }
+
+        public void StartProcess()
+        {
+            ValidateState(OrderState.Created);
+
+            State = OrderState.ProcessStarted;
+        }
+
+        private void ValidateState(OrderState state)
+        {
+            if (State != state)
+                throw new InvalidOperationException("Invalid state.");
         }
     }
 }

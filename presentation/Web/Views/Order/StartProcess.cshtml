@@ -1,0 +1,25 @@
+﻿@model OrderModel
+
+@{
+    ViewData["Title"] = "Подтверждение мобильного";
+}
+
+@await Html.PartialAsync("PartialDetails", Model)
+
+<p>
+    Нам нужен номер вашего мобильного, чтобы сообщить вам о поступлении
+    заказа. Номер должен быть правильным, поэтому мы пришлём вам
+    SMS с кодом.
+</p>
+<form action="@Url.Action("SendConfirmation")" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div class="form-group">
+        <label for="cellPhone">Мобильный телефон</label>
+        <input type="text" class="form-control" name="cellPhone" placeholder="+79876543210" />
+        @if (Model.Errors.ContainsKey("cellPhone"))
+        {
+            <small class="form-text text-danger">@Model.Errors["cellPhone"]</small>
+        }
+    </div>
+    <button type="submit" class="btn btn-success">Отправить код</button>
+</form>
