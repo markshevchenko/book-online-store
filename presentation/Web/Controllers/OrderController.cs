@@ -15,8 +15,8 @@ namespace Web.Controllers
         private readonly INotificationService notificationService;
 
         public OrderController(IOrderRepository orderRepository,
-                              IBookRepository bookRepository,
-                              INotificationService notificationService)
+                               IBookRepository bookRepository,
+                               INotificationService notificationService)
         {
             this.orderRepository = orderRepository;
             this.bookRepository = bookRepository;
@@ -62,30 +62,37 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddItem(int id)
+        public IActionResult AddItem(int bookId)
         {
-            var book = bookRepository.GetById(id);
-            Order order;
-            Cart cart;
+            var book = bookRepository.GetById(bookId);
 
-            if (HttpContext.Session.TryGetCart(out cart))
-            {
-                order = orderRepository.GetById(cart.OrderId);
-            }
-            else
-            {
-                order = orderRepository.Create();
-                cart = new Cart(order.Id);
-            }
+            (Order order, Cart cart) = GetCurrentOrderAndCart();
 
-            order.AddItem(book, 1);
+            order.Items.Add(book.Id, book.Price, 1);
             cart.TotalCount = order.TotalCount;
             cart.TotalAmount = order.TotalAmount;
 
             orderRepository.Update(order);
             HttpContext.Session.Set(cart);
 
-            return RedirectToAction("Index", "Book", new { id });
+            return RedirectToAction("Index", "Book", new { id = bookId });
+        }
+
+        private (Order order, Cart cart) GetCurrentOrderAndCart()
+        {
+            Order order;
+
+            if (HttpContext.Session.TryGetCart(out Cart cart))
+            {
+                order = orderRepository.GetById(cart.OrderId);
+
+                return (order, cart);
+            }
+
+            order = orderRepository.Create();
+            cart = new Cart(order.Id);
+
+            return (order, cart);
         }
 
         [HttpPost]

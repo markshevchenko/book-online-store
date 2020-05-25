@@ -8,16 +8,31 @@ namespace Store
 
         public decimal Price { get; }
 
-        public int Count { get; }
+        private int count;
+        public int Count
+        {
+            get { return count; }
+            set
+            {
+                ThrowIfInvalidCount(value);
+
+                count = value;
+            }
+        }
 
         public OrderItem(int bookId, decimal price, int count)
         {
-            if (count <= 0)
-                throw new ArgumentException("Count must be greater than zero.");
+            ThrowIfInvalidCount(count);
 
             BookId = bookId;
             Price = price;
             Count = count;
+        }
+
+        private static void ThrowIfInvalidCount(int count)
+        {
+            if (count <= 0)
+                throw new ArgumentOutOfRangeException("Count must be greater than zero.");
         }
     }
 }

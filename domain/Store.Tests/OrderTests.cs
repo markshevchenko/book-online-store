@@ -58,7 +58,7 @@ namespace Store.Tests
             var order = new Order(1, OrderState.Created, new[] { existingItem });
             var newBook = new Book(bookId2, "", "", "", "", bookPrice2);
 
-            order.AddItem(newBook, 5);
+            order.Items.Add(bookId2, bookPrice2, 5);
 
             Assert.Collection(order.Items,
                               item =>
@@ -80,7 +80,7 @@ namespace Store.Tests
             var order = new Order(1, OrderState.Created, new[] { existingItem });
             var existingBook = new Book(bookId1, "", "", "", "", bookPrice1);
 
-            order.AddItem(existingBook, 5);
+            order.Items.Add(bookId1, bookPrice1, 5);
 
             Assert.Collection(order.Items,
                               item =>

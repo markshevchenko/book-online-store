@@ -8,11 +8,7 @@ namespace Store
     {
         public int Id { get; }
 
-        private List<OrderItem> items;
-        public IReadOnlyCollection<OrderItem> Items
-        {
-            get { return items; }
-        }
+        public OrderItemCollection Items { get; }
 
         public OrderState State { get; private set; }
 
@@ -20,37 +16,22 @@ namespace Store
 
         public int TotalCount
         {
-            get { return items.Sum(item => item.Count); }
+            get { return Items.Sum(item => item.Count); }
         }
 
         public decimal TotalAmount
         {
-            get { return items.Sum(item => item.Price * item.Count); }
+            get { return Items.Sum(item => item.Price * item.Count); }
         }
 
         public Order(int id, OrderState state, IEnumerable<OrderItem> items)
         {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
             Id = id;
             State = state;
-            this.items = new List<OrderItem>(items);
-        }
-
-        public void AddItem(Book book, int count)
-        {
-            if (book == null)
-                throw new ArgumentNullException(nameof(book));
-
-            ValidateState(OrderState.Created);
-            
-            var item = items.SingleOrDefault(x => x.BookId == book.Id);
-
-            if (item != null)
-            {
-                items.Add(new OrderItem(book.Id, book.Price, item.Count + count));
-                items.Remove(item);
-            }
-            else
-                items.Add(new OrderItem(book.Id, book.Price, count));
+            Items = new OrderItemCollection(items);
         }
 
         public void StartProcess()
