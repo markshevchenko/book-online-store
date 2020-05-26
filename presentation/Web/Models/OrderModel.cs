@@ -17,6 +17,10 @@ namespace Web.Models
 
         public decimal TotalAmount { get; set; }
 
+        public string DeliveryDescription { get; set; }
+
         public Dictionary<string, string> Errors { get; set; } = new Dictionary<string, string>();
+
+        public Dictionary<string, string> Methods { get; set; } = new Dictionary<string, string>();
     }
 }

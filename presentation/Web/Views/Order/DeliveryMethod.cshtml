@@ -1,0 +1,24 @@
+﻿@model OrderModel
+
+@{
+    ViewData["Title"] = "Способ доставки";
+}
+
+@await Html.PartialAsync("PartialDetails", Model)
+
+<p>
+    Выберите способ доставки.
+</p>
+<form action="@Url.Action("StartDelivery")" method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <div class="form-group">
+        <label for="code">Способ доставки:</label>
+        <select class="form-control" name="code">
+            @foreach (var method in Model.Methods)
+            {
+                <option value="@method.Key">@method.Value</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-success">Далее</button>
+</form>

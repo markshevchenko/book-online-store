@@ -6,7 +6,7 @@
 
 @await Html.PartialAsync("PartialDetails", Model)
 
-<form action="@Url.Action("StartProcess")" method="post">
+<form action="@Url.Action("SetCellPhone")" method="post">
     <input type="hidden" name="id" value="@Model.Id" />
     <button type="submit" class="btn btn-success">Оформить</button>
 </form>

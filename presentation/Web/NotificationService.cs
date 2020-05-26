@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Store;
+﻿using Store;
 using System.Diagnostics;
 
 namespace Web

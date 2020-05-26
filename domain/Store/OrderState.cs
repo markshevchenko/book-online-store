@@ -4,8 +4,12 @@
     {
         Created = 1,
 
-        ProcessStarted,
+        CellPhone,
 
-        CellPhoneConfirmed,
+        Delivery,
+
+        Payment,
+
+        Passed,
     }
 }

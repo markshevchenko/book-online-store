@@ -6,15 +6,15 @@ namespace Store.Tests
     public class OrderItemTests
     {
         [Fact]
-        public void OrderItem_WithNegativeCount_ThrowsArgumentException()
+        public void OrderItem_WithNegativeCount_ThrowsArgumentOutOfRangeException()
         {
-            Assert.Throws<ArgumentException>(() => new OrderItem(1, 0m, -1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new OrderItem(1, 0m, -1));
         }
 
         [Fact]
-        public void OrderItem_WithZeroCount_ThrowsArgumentException()
+        public void OrderItem_WithZeroCount_ThrowsArgumentOutOfRangeException()
         {
-            Assert.Throws<ArgumentException>(() => new OrderItem(1, 0m, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new OrderItem(1, 0m, 0));
         }
 
         [Fact]

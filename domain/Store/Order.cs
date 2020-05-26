@@ -12,17 +12,58 @@ namespace Store
 
         public OrderState State { get; private set; }
 
-        public string CellPhone { get; set; }
-
-        public int TotalCount
+        private string cellPhone;
+        public string CellPhone
         {
-            get { return Items.Sum(item => item.Count); }
+            get { return cellPhone; }
+            set
+            {
+                ThrowIfStateIsNot(OrderState.Created);
+
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException(nameof(CellPhone));
+
+                cellPhone = value;
+                State = OrderState.CellPhone;
+            }
         }
 
-        public decimal TotalAmount
+        private OrderDelivery delivery;
+        public OrderDelivery Delivery
         {
-            get { return Items.Sum(item => item.Price * item.Count); }
+            get { return delivery; }
+            set
+            {
+                ThrowIfStateIsNot(OrderState.CellPhone);
+
+                if (value == null)
+                    throw new ArgumentNullException(nameof(Delivery));
+
+                State = OrderState.Delivery;
+                delivery = value;
+            }
         }
+
+        private OrderPayment payment;
+        public OrderPayment Payment
+        {
+            get { return payment; }
+            set
+            {
+                ThrowIfStateIsNot(OrderState.Delivery);
+
+                if (value == null)
+                    throw new ArgumentNullException(nameof(Payment));
+
+                State = OrderState.Payment;
+                payment = value;
+            }
+        }
+
+        public int TotalCount => Items.Sum(item => item.Count);
+
+        public decimal TotalAmount => Items.Sum(item => item.Price * item.Count)
+                                    + (Delivery?.Price ?? 0m);
 
         public Order(int id, OrderState state, IEnumerable<OrderItem> items)
         {
@@ -34,14 +75,7 @@ namespace Store
             Items = new OrderItemCollection(items);
         }
 
-        public void StartProcess()
-        {
-            ValidateState(OrderState.Created);
-
-            State = OrderState.ProcessStarted;
-        }
-
-        private void ValidateState(OrderState state)
+        private void ThrowIfStateIsNot(OrderState state)
         {
             if (State != state)
                 throw new InvalidOperationException("Invalid state.");

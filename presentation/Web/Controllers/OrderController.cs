@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Store;
+using Store.Contractors;
 using Web.Models;
 
 namespace Web.Controllers
@@ -12,14 +14,17 @@ namespace Web.Controllers
     {
         private readonly IOrderRepository orderRepository;
         private readonly IBookRepository bookRepository;
+        private readonly IEnumerable<IDeliveryService> deliveryServices;
         private readonly INotificationService notificationService;
 
         public OrderController(IOrderRepository orderRepository,
                                IBookRepository bookRepository,
+                               IEnumerable<IDeliveryService> deliveryServices,
                                INotificationService notificationService)
         {
             this.orderRepository = orderRepository;
             this.bookRepository = bookRepository;
+            this.deliveryServices = deliveryServices;
             this.notificationService = notificationService;
         }
 
@@ -58,6 +63,7 @@ namespace Web.Controllers
                 Items = itemModels.ToArray(),
                 TotalCount = order.TotalCount,
                 TotalAmount = order.TotalAmount,
+                DeliveryDescription = order.Delivery?.Description,
             };
         }
 
@@ -96,15 +102,13 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult StartProcess(int id)
+        public IActionResult SetCellPhone(int id)
         {
             var order = orderRepository.GetById(id);
-            order.StartProcess();
-            orderRepository.Update(order);
 
             var model = Map(order);
 
-            return View(model);
+            return View("CellPhone", model);
         }
 
         [HttpPost]
@@ -124,7 +128,7 @@ namespace Web.Controllers
             notificationService.SendConfirmationCode(cellPhone, code);
             model.CellPhone = cellPhone;
 
-            return View(model);
+            return View("Confirmation", model);
         }
 
         private bool IsValidCellPhone(string cellPhone)
@@ -149,12 +153,12 @@ namespace Web.Controllers
 
             var storedCode = HttpContext.Session.GetInt32(cellPhone);
             if (storedCode == null)
-                return View("StartProcess", model);
+                return View("CellPhone", model);
 
             if (storedCode != code)
             {
                 model.Errors["code"] = "Отличается от отправленного";
-                return View("SendConfirmation", model);
+                return View("Confirmation", model);
             }
 
             order.CellPhone = cellPhone;
@@ -162,7 +166,40 @@ namespace Web.Controllers
 
             HttpContext.Session.Remove(cellPhone);
 
-            return View(model);
+            model.Methods = deliveryServices.ToDictionary(service => service.Code, service => service.Title);
+
+            return View("DeliveryMethod", model);
+        }
+
+        [HttpPost]
+        public IActionResult StartDelivery(int id, string code)
+        {
+            var deliveryService = deliveryServices.Single(service => service.Code == code);
+
+            var order = orderRepository.GetById(id);
+            var form = deliveryService.CreateForm(order);
+
+            return View("DeliveryStep", form);
+        }
+
+        [HttpPost]
+        public IActionResult NextDelivery(int id, string code, int step, Dictionary<string, string> values)
+        {
+            var deliveryService = deliveryServices.Single(service => service.Code == code);
+
+            var form = deliveryService.MoveNext(id, step, values);
+
+            if (form.IsFinal)
+            {
+                var order = orderRepository.GetById(id);
+                order.Delivery = deliveryService.GetDelivery(form);
+                orderRepository.Update(order);
+
+                var model = Map(order);
+                return View("PaymentMethod", model);
+            }
+
+            return View("DeliveryStep", form);
         }
     }
 }
