@@ -11,7 +11,7 @@ namespace Data.Memory
         public Order Create()
         {
             int nextId = orders.Count + 1;
-            var order = new Order(nextId, OrderState.Created, Enumerable.Empty<OrderItem>());
+            var order = new Order(nextId, Enumerable.Empty<OrderItem>());
 
             orders.Add(order);
 

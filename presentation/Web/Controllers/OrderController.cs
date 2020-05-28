@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Store;
 using Store.Contractors;
+using Store.Messages;
 using Web.Models;
 
 namespace Web.Controllers
@@ -166,7 +167,7 @@ namespace Web.Controllers
 
             HttpContext.Session.Remove(cellPhone);
 
-            model.Methods = deliveryServices.ToDictionary(service => service.Code, service => service.Title);
+            model.Methods = deliveryServices.ToDictionary(service => service.UniqueCode, service => service.Title);
 
             return View("DeliveryMethod", model);
         }
@@ -174,7 +175,7 @@ namespace Web.Controllers
         [HttpPost]
         public IActionResult StartDelivery(int id, string code)
         {
-            var deliveryService = deliveryServices.Single(service => service.Code == code);
+            var deliveryService = deliveryServices.Single(service => service.UniqueCode == code);
 
             var order = orderRepository.GetById(id);
             var form = deliveryService.CreateForm(order);
@@ -183,9 +184,9 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult NextDelivery(int id, string code, int step, Dictionary<string, string> values)
+        public IActionResult NextDelivery(int id, string uniqueCode, int step, Dictionary<string, string> values)
         {
-            var deliveryService = deliveryServices.Single(service => service.Code == code);
+            var deliveryService = deliveryServices.Single(service => service.UniqueCode == uniqueCode);
 
             var form = deliveryService.MoveNext(id, step, values);
 

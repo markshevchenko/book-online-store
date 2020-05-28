@@ -8,7 +8,7 @@ namespace Store.Tests
         [Fact]
         public void TotalCount_WithEmptyItems_ReturnsZero()
         {
-            var order = new Order(1, OrderState.Created, Enumerable.Empty<OrderItem>());
+            var order = new Order(1, Enumerable.Empty<OrderItem>());
 
             Assert.Equal(0, order.TotalCount);
         }
@@ -16,11 +16,10 @@ namespace Store.Tests
         [Fact]
         public void TotalCount_WithNonEmptyItems_CalculatesTotalCount()
         {
-            var order = new Order(1, OrderState.Created, new[]
-                                     {
-                                         new OrderItem(1, 10m, 3),
-                                         new OrderItem(2, 100m, 5),
-                                     });
+
+            var order = new Order(1, Enumerable.Empty<OrderItem>());
+            order.Items.Add(bookId: 1, price: 10m, count: 3);
+            order.Items.Add(bookId: 2, price: 100m, count: 5);
 
             Assert.Equal(3 + 5, order.TotalCount);
         }
@@ -28,7 +27,7 @@ namespace Store.Tests
         [Fact]
         public void TotalAmount_WithEmptyItems_ReturnsZero()
         {
-            var order = new Order(1, OrderState.Created, Enumerable.Empty<OrderItem>());
+            var order = new Order(1, Enumerable.Empty<OrderItem>());
 
             Assert.Equal(0m, order.TotalAmount);
         }
@@ -36,11 +35,9 @@ namespace Store.Tests
         [Fact]
         public void TotalAmount_WithNonEmptyItems_CalculatsTotalAmount()
         {
-            var order = new Order(1, OrderState.Created, new[]
-                                     {
-                                         new OrderItem(1, 10m, 3),
-                                         new OrderItem(2, 100m, 5),
-                                     });
+            var order = new Order(1, Enumerable.Empty<OrderItem>());
+            order.Items.Add(1, 10m, 3);
+            order.Items.Add(2, 100m, 5);
 
             Assert.Equal(3 * 10m + 5 * 100m, order.TotalAmount);
         }
@@ -54,10 +51,8 @@ namespace Store.Tests
         [Fact]
         public void AddItem_WithNewBookId_AddsItem()
         {
-            var existingItem = new OrderItem(bookId1, bookPrice1, 3);
-            var order = new Order(1, OrderState.Created, new[] { existingItem });
-            var newBook = new Book(bookId2, "", "", "", "", bookPrice2);
-
+            var order = new Order(1, Enumerable.Empty<OrderItem>());
+            order.Items.Add(bookId1, bookPrice1, 3);
             order.Items.Add(bookId2, bookPrice2, 5);
 
             Assert.Collection(order.Items,
@@ -76,10 +71,8 @@ namespace Store.Tests
         [Fact]
         public void AddItem_WithExistingBookId_UpdatesItem()
         {
-            var existingItem = new OrderItem(bookId1, bookPrice1, 3);
-            var order = new Order(1, OrderState.Created, new[] { existingItem });
-            var existingBook = new Book(bookId1, "", "", "", "", bookPrice1);
-
+            var order = new Order(1, Enumerable.Empty<OrderItem>());
+            order.Items.Add(bookId1, bookPrice1, 3);
             order.Items.Add(bookId1, bookPrice1, 5);
 
             Assert.Collection(order.Items,

@@ -1,4 +1,4 @@
-﻿namespace Store
+﻿namespace Store.Messages
 {
     public interface INotificationService
     {

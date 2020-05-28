@@ -1,4 +1,4 @@
-﻿using Store;
+﻿using Store.Messages;
 using System.Diagnostics;
 
 namespace Web

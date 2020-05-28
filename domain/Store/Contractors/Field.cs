@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Store.Contractors
 {
@@ -12,26 +13,37 @@ namespace Store.Contractors
 
         protected Field(string label, string name, string value)
         {
+            if (string.IsNullOrWhiteSpace(label))
+                throw new ArgumentException(nameof(label));
+
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException(nameof(name));
+
             Label = label;
             Name = name;
             Value = value;
         }
     }
 
-    public class HiddenField : Field
+    public class FixedField : Field
     {
-        public HiddenField(string label, string name, string value)
+        public FixedField(string label, string name, string value)
             : base(label, name, value)
-        {
-        }
+        { }
     }
 
-    public class LineField : Field
+    public class StringField : Field
     {
-        public LineField(string label, string name, string value)
+        public StringField(string label, string name, string value)
             : base(label, name, value)
-        {
-        }
+        { }
+    }
+
+    public class TextField : Field
+    {
+        public TextField(string label, string name, string value)
+            : base(label, name, value)
+        { }
     }
 
     public class SelectionField : Field
@@ -41,6 +53,9 @@ namespace Store.Contractors
         public SelectionField(string label, string name, string value, IReadOnlyDictionary<string, string> items)
             : base(label, name, value)
         {
+            if (items == null)
+                throw new ArgumentNullException(nameof(items));
+
             Items = items;
         }
     }

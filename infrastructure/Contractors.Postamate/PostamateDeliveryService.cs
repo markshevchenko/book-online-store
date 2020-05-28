@@ -35,27 +35,27 @@ namespace Contractors.Postamate
             }
         };
 
-        public string Code => "Postamate";
+        public string UniqueCode => "Postamate";
 
         public string Title => "Доставка через постаматы в Москве и Санкт-Петербурге";
 
-        public Form CreateForm(Order order)
+        public Step CreateForm(Order order)
         {
             if (order == null)
                 throw new ArgumentNullException(nameof(order));
 
-            return new Form(Code, order.Id, 1, false, new[]
+            return new Step(UniqueCode, order.Id, 1, false, new[]
             {
                 new SelectionField("Город", "city", "1", cities),
             });
         }
 
-        public OrderDelivery GetDelivery(Form form)
+        public OrderDelivery GetDelivery(Step form)
         {
             if (form == null)
                 throw new ArgumentNullException(nameof(form));
 
-            if (form.Code != Code || form.Step != 3 || !form.IsFinal)
+            if (form.UniqueCode != UniqueCode || form.Number != 3 || !form.IsFinal)
                 throw new InvalidOperationException("Unrecognized form data.");
 
             var cityId = form.Fields[0].Value;
@@ -66,26 +66,26 @@ namespace Contractors.Postamate
             var description = $"Город: {city}\nПостамат: {postamate}\n";
             var parameters = new { CityId = cityId, PostamateId = postamateId };
 
-            return new OrderDelivery(Code, description, parameters, 100m);
+            return new OrderDelivery(UniqueCode, description, parameters, 100m);
         }
 
-        public Form MoveNext(int orderId, int step, IReadOnlyDictionary<string, string> values)
+        public Step MoveNext(int orderId, int step, IReadOnlyDictionary<string, string> values)
         {
             if (step == 1)
             {
                 if (values["city"] == "1")
                 {
-                    return new Form(Code, orderId, 2, false, new Field[]
+                    return new Step(UniqueCode, orderId, 2, false, new Field[]
                     {
-                        new HiddenField("Город", "city", "1"),
+                        new FixedField("Город", "city", "1"),
                         new SelectionField("Постамат", "postamate", "1", postamates["1"]),
                     });
                 }
                 else if (values["city"] == "2")
                 {
-                    return new Form(Code, orderId, 2, false, new Field[]
+                    return new Step(UniqueCode, orderId, 2, false, new Field[]
                     {
-                        new HiddenField("Город", "city", "2"),
+                        new FixedField("Город", "city", "2"),
                         new SelectionField("Постамат", "postamate", "4", postamates["2"]),
                     });
                 }
@@ -94,10 +94,10 @@ namespace Contractors.Postamate
             }
             else if (step == 2)
             {
-                return new Form(Code, orderId, 3, true, new Field[]
+                return new Step(UniqueCode, orderId, 3, true, new Field[]
                 {
-                    new HiddenField("Город", "city", values["city"]),
-                    new HiddenField("Постамат", "postamate", values["postamate"]),
+                    new FixedField("Город", "city", values["city"]),
+                    new FixedField("Постамат", "postamate", values["postamate"]),
                 });
             }
             else

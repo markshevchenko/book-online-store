@@ -2,14 +2,10 @@
 {
     public enum OrderState
     {
-        Created = 1,
+        Pushing = 1,
 
-        CellPhone,
+        Processing,
 
-        Delivery,
-
-        Payment,
-
-        Passed,
+        Collecting,
     }
 }

@@ -7,10 +7,12 @@ namespace Store
 {
     public class OrderItemCollection : IReadOnlyCollection<OrderItem>
     {
+        private readonly Order order;
         private readonly List<OrderItem> items;
 
-        public OrderItemCollection(IEnumerable<OrderItem> items)
+        public OrderItemCollection(Order order, IEnumerable<OrderItem> items)
         {
+            this.order = order;
             this.items = new List<OrderItem>(items);
         }
 
@@ -28,10 +30,13 @@ namespace Store
 
         public OrderItem Add(int bookId, decimal price, int count)
         {
+            if (order.State != OrderState.Pushing)
+                throw new InvalidOperationException("Invalid order state.");
+
             var orderItem = items.SingleOrDefault(item => item.BookId == bookId);
             if (orderItem == null)
             {
-                orderItem = new OrderItem(bookId, price, count);
+                orderItem = new OrderItem(order, bookId, price, count);
                 items.Add(orderItem);
             }
             else
@@ -42,6 +47,9 @@ namespace Store
 
         public void Remove(int bookId)
         {
+            if (order.State != OrderState.Pushing)
+                throw new InvalidOperationException("Invalid order state.");
+
             int index = IndexByBookId(bookId);
 
             items.RemoveAt(index);

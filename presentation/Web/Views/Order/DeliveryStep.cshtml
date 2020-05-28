@@ -1,4 +1,4 @@
-﻿@model Form
+﻿@model Step
 
 @{
     ViewData["Title"] = "Параметры доставки";
@@ -6,17 +6,17 @@
 
 <h1>Параметры доставки</h1>
 
-<form action="@Url.Action("NextDelivery")" method="post">
+<form action="@Url.Action(nameof(OrderController.NextDelivery))" method="post">
     <input type="hidden" name="id" value="@Model.OrderId" />
-    <input type="hidden" name="code" value="@Model.Code" />
-    <input type="hidden" name="step" value="@Model.Step" />
+    <input type="hidden" name="uniqueCode" value="@Model.UniqueCode" />
+    <input type="hidden" name="step" value="@Model.Number" />
     @foreach (var field in Model.Fields)
     {
-        if (field is HiddenField hiddenField)
+        if (field is FixedField hiddenField)
         {
             <input type="hidden" name="values[@field.Name]" value="@field.Value" />
         }
-        else if (field is LineField lineField)
+        else if (field is StringField lineField)
         {
             <div class="form-group">
                 <label for="values[@field.Name]">@field.Label</label>
@@ -28,10 +28,10 @@
             <div class="form-group">
                 <label for="values[@field.Name]">@field.Label</label>
                 <select class="form-control" name="values[@field.Name]">
-                    @foreach (var item in selectionField.Items)
-                    {
-                        <option value="@item.Key">@item.Value</option>
-                    }
+                @foreach (var item in selectionField.Items)
+                {
+                    <option value="@item.Key">@item.Value</option>
+                }
                 </select>
             </div>
         }
