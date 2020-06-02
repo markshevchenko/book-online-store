@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Store;
 using Store.Contractors;
 using Store.Messages;
+using Web.Contractors;
 using Web.Models;
 
 namespace Web.Controllers
@@ -16,19 +17,26 @@ namespace Web.Controllers
         private readonly IOrderRepository orderRepository;
         private readonly IBookRepository bookRepository;
         private readonly IEnumerable<IDeliveryService> deliveryServices;
+        private readonly IEnumerable<IPaymentService> paymentServices;
+        private readonly IEnumerable<IWebService> webServices;
         private readonly INotificationService notificationService;
 
         public OrderController(IOrderRepository orderRepository,
                                IBookRepository bookRepository,
                                IEnumerable<IDeliveryService> deliveryServices,
+                               IEnumerable<IPaymentService> paymentServices,
+                               IEnumerable<IWebService> webServices,
                                INotificationService notificationService)
         {
             this.orderRepository = orderRepository;
             this.bookRepository = bookRepository;
             this.deliveryServices = deliveryServices;
+            this.paymentServices = paymentServices;
+            this.webServices = webServices;
             this.notificationService = notificationService;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             if (HttpContext.Session.TryGetCart(out Cart cart))
@@ -142,8 +150,7 @@ namespace Web.Controllers
 
         private int GenerateCode()
         {
-            var random = new Random();
-            return random.Next(1, 10000);
+            return 1111;
         }
 
         [HttpPost]
@@ -167,15 +174,15 @@ namespace Web.Controllers
 
             HttpContext.Session.Remove(cellPhone);
 
-            model.Methods = deliveryServices.ToDictionary(service => service.UniqueCode, service => service.Title);
+            model.Methods = deliveryServices.ToDictionary(service => service.Uid, service => service.Title);
 
             return View("DeliveryMethod", model);
         }
 
         [HttpPost]
-        public IActionResult StartDelivery(int id, string code)
+        public IActionResult StartDelivery(int id, Guid uid)
         {
-            var deliveryService = deliveryServices.Single(service => service.UniqueCode == code);
+            var deliveryService = deliveryServices.Single(service => service.Uid == uid);
 
             var order = orderRepository.GetById(id);
             var form = deliveryService.CreateForm(order);
@@ -184,9 +191,9 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult NextDelivery(int id, string uniqueCode, int step, Dictionary<string, string> values)
+        public IActionResult NextDelivery(int id, Guid uid, int step, Dictionary<string, string> values)
         {
-            var deliveryService = deliveryServices.Single(service => service.UniqueCode == uniqueCode);
+            var deliveryService = deliveryServices.Single(service => service.Uid == uid);
 
             var form = deliveryService.MoveNext(id, step, values);
 
@@ -197,10 +204,56 @@ namespace Web.Controllers
                 orderRepository.Update(order);
 
                 var model = Map(order);
+                model.Methods = paymentServices.ToDictionary(service => service.Uid, service => service.Title);
+                
                 return View("PaymentMethod", model);
             }
 
             return View("DeliveryStep", form);
+        }
+
+        [HttpPost]
+        public IActionResult StartPayment(int id, Guid uid)
+        {
+            var paymentService = paymentServices.Single(service => service.Uid == uid);
+
+            var order = orderRepository.GetById(id);
+            var form = paymentService.CreateForm(order);
+
+            var webService = webServices.SingleOrDefault(service => service.Uid == uid);
+            if (webService != null)
+            {
+                var model = new PostRedirectModel
+                {
+                    Uri = webService.PostUri,
+                    Description = "Оплата через Яндекс.Кассу",
+                    Parameters = form.Fields.ToDictionary(field => field.Name, field => field.Value),
+                };
+
+                return View("PostRedirect", model);
+            }
+
+            return View("PaymentStep", form);
+        }
+
+        [HttpPost]
+        public IActionResult NextPayment(int id, Guid uid, int step, Dictionary<string, string> values)
+        {
+            var paymentService = paymentServices.Single(service => service.Uid == uid);
+
+            var form = paymentService.MoveNext(id, step, values);
+
+            if (form.IsFinal)
+            {
+                var order = orderRepository.GetById(id);
+                order.Payment = paymentService.GetPayment(form);
+                orderRepository.Update(order);
+
+                var model = Map(order);
+                return View("Finish", model);
+            }
+
+            return View("PaymentStep", form);
         }
     }
 }

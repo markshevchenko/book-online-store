@@ -1,4 +1,6 @@
+using System;
 using Contractors.Postamate;
+using Contractors.YandexKassa;
 using Data.Memory;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Store;
 using Store.Contractors;
 using Store.Messages;
-using System;
+using Web.Contractors;
 
 namespace Web
 {
@@ -37,6 +39,8 @@ namespace Web
             services.AddSingleton<IOrderRepository, OrderRepository>();
             services.AddSingleton<BookService>();
             services.AddSingleton<IDeliveryService, PostamateDeliveryService>();
+            services.AddSingleton<IPaymentService, YandexKassaService>();
+            services.AddSingleton<IWebService, YandexKassaService>();
             services.AddSingleton<INotificationService, NotificationService>();
         }
 
@@ -66,6 +70,11 @@ namespace Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapAreaControllerRoute(
+                    name: "yandex-kassa",
+                    areaName: "YandexKassa",
+                    pattern: "YandexKassa/{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

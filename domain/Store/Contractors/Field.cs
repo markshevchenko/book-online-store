@@ -25,9 +25,9 @@ namespace Store.Contractors
         }
     }
 
-    public class FixedField : Field
+    public class HiddenField : Field
     {
-        public FixedField(string label, string name, string value)
+        public HiddenField(string label, string name, string value)
             : base(label, name, value)
         { }
     }

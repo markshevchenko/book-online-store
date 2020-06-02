@@ -6,7 +6,7 @@
 
 @await Html.PartialAsync("PartialDetails", Model)
 
-<form action="@Url.Action("ConfirmCellPhone")" method="post">
+<form action="@Url.Action(nameof(OrderController.ConfirmCellPhone))" method="post">
     <input type="hidden" name="id" value="@Model.Id" />
     <input type="hidden" name="cellPhone" value="@Model.CellPhone" />
     <div class="form-group">

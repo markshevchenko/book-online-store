@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Store.Contractors
 {
     public interface IDeliveryService
     {
-        string UniqueCode { get; }
+        Guid Uid { get; }
 
         string Title { get; }
 
-        Step CreateForm(Order order);
+        Form CreateForm(Order order);
 
-        Step MoveNext(int orderId, int step, IReadOnlyDictionary<string, string> values);
+        Form MoveNext(int orderId, int step, IReadOnlyDictionary<string, string> values);
 
-        OrderDelivery GetDelivery(Step form);
+        OrderDelivery GetDelivery(Form form);
     }
 }

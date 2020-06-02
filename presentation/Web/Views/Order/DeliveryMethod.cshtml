@@ -9,11 +9,11 @@
 <p>
     Выберите способ доставки.
 </p>
-<form action="@Url.Action("StartDelivery")" method="post">
+<form action="@Url.Action(nameof(OrderController.StartDelivery))" method="post">
     <input type="hidden" name="id" value="@Model.Id" />
     <div class="form-group">
         <label for="code">Способ доставки:</label>
-        <select class="form-control" name="code">
+        <select class="form-control" name="uid">
         @foreach (var method in Model.Methods)
         {
             <option value="@method.Key">@method.Value</option>

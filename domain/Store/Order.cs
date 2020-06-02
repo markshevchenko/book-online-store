@@ -18,14 +18,14 @@ namespace Store
             get { return cellPhone; }
             set
             {
-                if (State == OrderState.Pushing || State == OrderState.Processing)
+                if (State != OrderState.Created && State != OrderState.Pushed)
                     throw new InvalidOperationException("Invalid state.");
 
                 if (string.IsNullOrWhiteSpace(value))
                     throw new ArgumentException(nameof(CellPhone));
 
                 cellPhone = value;
-                State = OrderState.Processing;
+                State = OrderState.Pushed;
             }
         }
 
@@ -35,13 +35,13 @@ namespace Store
             get { return delivery; }
             set
             {
-                if (State == OrderState.Pushing || State == OrderState.Processing)
+                if (State != OrderState.Created && State != OrderState.Pushed)
                     throw new InvalidOperationException("Invalid state.");
 
                 if (value == null)
                     throw new ArgumentNullException(nameof(Delivery));
 
-                State = OrderState.Processing;
+                State = OrderState.Pushed;
                 delivery = value;
             }
         }
@@ -52,13 +52,13 @@ namespace Store
             get { return payment; }
             set
             {
-                if (State == OrderState.Pushing || State == OrderState.Processing)
+                if (State != OrderState.Created && State != OrderState.Pushed)
                     throw new InvalidOperationException("Invalid state.");
 
                 if (value == null)
                     throw new ArgumentNullException(nameof(Payment));
 
-                State = OrderState.Processing;
+                State = OrderState.Pushed;
                 payment = value;
             }
         }
@@ -74,7 +74,7 @@ namespace Store
                 throw new ArgumentNullException(nameof(items));
 
             Id = id;
-            State = OrderState.Pushing;
+            State = OrderState.Created;
             Items = new OrderItemCollection(this, items);
         }
     }

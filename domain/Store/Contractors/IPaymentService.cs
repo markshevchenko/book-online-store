@@ -1,17 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Store.Contractors
 {
     public interface IPaymentService
     {
-        string UniqueCode { get; }
+        Guid Uid { get; }
 
         string Title { get; }
 
-        Step CreateForm(Order order);
+        Form CreateForm(Order order);
 
-        Step MoveNext(int orderId, int step, IReadOnlyDictionary<string, string> values);
+        Form MoveNext(int orderId, int step, IReadOnlyDictionary<string, string> values);
 
-        OrderPayment GetPayment(Step form);
+        OrderPayment GetPayment(Form form);
     }
 }

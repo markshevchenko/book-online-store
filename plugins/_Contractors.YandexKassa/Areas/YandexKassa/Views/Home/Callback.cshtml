@@ -1,0 +1,22 @@
+﻿@model Contractors.YandexKassa.Areas.YandexKassa.Models.StartModel
+
+@{
+    ViewBag["Title"] = "Успешная оплата";
+}
+
+<h1>Успешная оплата</h1>
+
+<p>
+    С вашей карты списана сумма @Model.Amount для оплаты заказа #@Model.OrderId
+</p>
+
+<p>
+    <a href="@Url.Action("Index", "Home", new { area = "" })">Вернуться в магазин</a>.
+</p>
+
+<form action="@Url.Action(nameof(Contractors.YandexKassa.Areas.YandexKassa.Controllers.HomeController.Card))" method="put">
+    <input type="hidden" name="orderId" value="@Model.OrderId" />
+    <input type="hidden" name="description" value="@Model.Description" />
+    <input type="hidden" name="amount" value="@Model.Amount" />
+    <button type="submit" class="btn btn-success">Оплатить</button>
+</form>

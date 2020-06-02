@@ -1,27 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Store
 {
     public class OrderPayment
     {
-        public string Code { get; }
+        public Guid Uid { get; }
 
         public string Description { get; }
 
-        public object Parameters { get; }
+        public IReadOnlyDictionary<string, string> Parameters { get; }
 
-        public OrderPayment(string code, string description, object parameters)
+        public OrderPayment(Guid uid, string description, IReadOnlyDictionary<string, string> parameters)
         {
-            if (code == null)
-                throw new ArgumentNullException(nameof(code));
-
             if (description == null)
                 throw new ArgumentNullException(nameof(description));
 
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 
-            Code = code;
+            Uid = uid;
             Description = description;
             Parameters = parameters;
         }

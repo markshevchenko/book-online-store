@@ -2,10 +2,14 @@
 {
     public enum OrderState
     {
-        Pushing = 1,
+        Created = 1,
 
-        Processing,
+        Pushed,
 
-        Collecting,
+        Processed,
+
+        Collected,
+
+        Finished,
     }
 }

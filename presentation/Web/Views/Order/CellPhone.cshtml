@@ -11,7 +11,7 @@
     заказа. Номер должен быть правильным, поэтому мы пришлём вам
     SMS с кодом.
 </p>
-<form action="@Url.Action("SendConfirmation")" method="post">
+<form action="@Url.Action(nameof(OrderController.SendConfirmation))" method="post">
     <input type="hidden" name="id" value="@Model.Id" />
     <div class="form-group">
         <label for="cellPhone">Мобильный телефон</label>

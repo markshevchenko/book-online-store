@@ -4,32 +4,29 @@ using System.Linq;
 
 namespace Store.Contractors
 {
-    public class Step
+    public class Form
     {
-        public string UniqueCode { get; }
+        public Guid Uid { get; }
 
         public int OrderId { get; }
 
-        public int Number { get; }
+        public int Step { get; }
 
         public bool IsFinal { get; }
 
         public IReadOnlyList<Field> Fields { get; }
 
-        public Step(string uniqueCode, int orderId, int step, bool isFinal, IEnumerable<Field> fields)
+        public Form(Guid uid, int orderId, int step, bool isFinal, IEnumerable<Field> fields)
         {
-            if (string.IsNullOrWhiteSpace(uniqueCode))
-                throw new ArgumentException(nameof(uniqueCode));
-
             if (step < 1)
                 throw new ArgumentOutOfRangeException(nameof(step));
 
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
 
-            UniqueCode = uniqueCode;
+            Uid = uid;
             OrderId = orderId;
-            Number = step;
+            Step = step;
             IsFinal = isFinal;
             Fields = fields.ToArray();
         }

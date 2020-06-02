@@ -6,7 +6,7 @@
 
 <h1>Параметры доставки</h1>
 
-<form action="@Url.Action(nameof(OrderController.NextDelivery))" method="post">
+<form action="@Url.Action(nameof(OrderController.NextPayment))" method="post">
     <input type="hidden" name="id" value="@Model.OrderId" />
     <input type="hidden" name="uid" value="@Model.Uid" />
     <input type="hidden" name="step" value="@Model.Step" />

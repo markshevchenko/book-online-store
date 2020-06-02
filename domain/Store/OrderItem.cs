@@ -16,7 +16,7 @@ namespace Store
             get { return count; }
             set
             {
-                if (order.State != OrderState.Pushing)
+                if (order.State != OrderState.Created)
                     throw new InvalidOperationException("Invalid order state.");
 
                 ThrowIfInvalidCount(value);

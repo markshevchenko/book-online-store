@@ -30,7 +30,7 @@ namespace Store
 
         public OrderItem Add(int bookId, decimal price, int count)
         {
-            if (order.State != OrderState.Pushing)
+            if (order.State != OrderState.Created)
                 throw new InvalidOperationException("Invalid order state.");
 
             var orderItem = items.SingleOrDefault(item => item.BookId == bookId);
@@ -47,7 +47,7 @@ namespace Store
 
         public void Remove(int bookId)
         {
-            if (order.State != OrderState.Pushing)
+            if (order.State != OrderState.Created)
                 throw new InvalidOperationException("Invalid order state.");
 
             int index = IndexByBookId(bookId);

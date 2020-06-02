@@ -10,8 +10,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\domain\Store\Store.csproj" />
-    <ProjectReference Include="..\..\infrastructure\Contractors.Postamate\Contractors.Postamate.csproj" />
     <ProjectReference Include="..\..\infrastructure\Data.Memory\Data.Memory.csproj" />
+    <ProjectReference Include="..\..\plugins\Contractors.Postamate\Contractors.Postamate.csproj" />
+    <ProjectReference Include="..\..\plugins\Contractors.YandexKassa\Contractors.YandexKassa.csproj" />
+    <ProjectReference Include="..\Web.Contractors\Web.Contractors.csproj" />
   </ItemGroup>
 
 </Project>

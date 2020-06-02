@@ -1,4 +1,5 @@
 ﻿using Store;
+using System;
 using System.Collections.Generic;
 
 namespace Web.Models
@@ -21,6 +22,6 @@ namespace Web.Models
 
         public Dictionary<string, string> Errors { get; set; } = new Dictionary<string, string>();
 
-        public Dictionary<string, string> Methods { get; set; } = new Dictionary<string, string>();
+        public Dictionary<Guid, string> Methods { get; set; } = new Dictionary<Guid, string>();
     }
 }
