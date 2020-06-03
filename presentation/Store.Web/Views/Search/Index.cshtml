@@ -1,0 +1,21 @@
+﻿@model Book[]
+
+@{
+    ViewData["Title"] = "Результаты поиска";
+}
+
+<h1>Результаты поиска</h1>
+
+@if (Model.Length == 0)
+{
+    <p>Ничего не найдено.</p>
+}
+else
+{
+    <ul>
+    @foreach (var book in Model)
+    {
+        <li><a href="@Url.Action("Index", "Book", new { id = book.Id })">@book.Title</a></li>
+    }
+    </ul>
+}

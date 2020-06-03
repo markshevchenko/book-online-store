@@ -1,4 +1,3 @@
-using System;
 using Xunit;
 
 namespace Store.Tests
@@ -6,57 +5,51 @@ namespace Store.Tests
     public class BookTests
     {
         [Fact]
-        public void IsIsbnValid_WithNull_ReturnsFalse()
+        public void IsIsbn_WithNull_ReturnFalse()
         {
-            var isIsnbnValid = Book.IsIsbnValid(null);
+            bool actual = Book.IsIsbn(null);
 
-            Assert.False(isIsnbnValid);
+            Assert.False(actual);
         }
 
         [Fact]
-        public void IsIsbnValid_WithSpaces_ReturnsFalse()
+        public void IsIsbn_WithBlankString_ReturnFalse()
         {
-            var isIsnbnValid = Book.IsIsbnValid("    ");
+            bool actual = Book.IsIsbn("   ");
 
-            Assert.False(isIsnbnValid);
+            Assert.False(actual);
         }
 
         [Fact]
-        public void IsIsbnValid_WithInvalidIsbn_ReturnsFalse()
+        public void IsIsbn_WithInvalidIsbn_ReturnFalse()
         {
-            var isIsnbnValid = Book.IsIsbnValid("ISBN 1234");
+            bool actual = Book.IsIsbn("ISBN 123");
 
-            Assert.False(isIsnbnValid);
+            Assert.False(actual);
         }
 
         [Fact]
-        public void IsIsbnValid_WithIsbn10_ReturnsTrue()
+        public void IsIsbn_WithIsbn10_ReturnTrue()
         {
-            var isIsnbnValid = Book.IsIsbnValid("ISBN 12345-67980");
+            bool actual = Book.IsIsbn("IsBn 123-456-789 0");
 
-            Assert.True(isIsnbnValid);
+            Assert.True(actual);
         }
 
         [Fact]
-        public void IsIsbnValid_WithIsbn13_ReturnsTrue()
+        public void IsIsbn_WithIsbn13_ReturnTrue()
         {
-            var isIsnbnValid = Book.IsIsbnValid("ISBN 12345-67980-123");
+            bool actual = Book.IsIsbn("IsBn 123-456-789 0123");
 
-            Assert.True(isIsnbnValid);
+            Assert.True(actual);
         }
 
         [Fact]
-        public void NormalizeIsbn_WithNull_ThrowsArgumentNullException()
+        public void IsIsbn_WithTrashStart_ReturnFalse()
         {
-            Assert.Throws<ArgumentNullException>(() => Book.NormalizeIsbn(null));
-        }
+            bool actual = Book.IsIsbn("xxx IsBn 123-456-789 0123 yyy");
 
-        [Fact]
-        public void NormalizeIsbn_WithDashesAndSpaces_RemovesDashesAndSpaces()
-        {
-            var actual = Book.NormalizeIsbn("ISBN-123-456 78 90");
-
-            Assert.Equal("ISBN1234567890", actual);
+            Assert.False(actual);
         }
     }
 }

@@ -5,26 +5,33 @@ namespace Store
 {
     public class OrderDelivery
     {
-        public Guid Uid { get; }
+        public string UniqueCode { get; }
 
         public string Description { get; }
 
+        public decimal Amount { get; }
+
         public IReadOnlyDictionary<string, string> Parameters { get; }
 
-        public decimal Price { get; }
-
-        public OrderDelivery(Guid uid, string description, IReadOnlyDictionary<string, string> parameters, decimal price)
+        public OrderDelivery(string uniqueCode,
+                             string description,
+                             decimal amount,
+                             IReadOnlyDictionary<string, string> parameters)
         {
-            if (description == null)
-                throw new ArgumentNullException(nameof(description));
+            if (string.IsNullOrWhiteSpace(uniqueCode))
+                throw new ArgumentException(nameof(uniqueCode));
+
+            if (string.IsNullOrWhiteSpace(description))
+                throw new ArgumentException(nameof(description));
 
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
 
-            Uid = uid;
+            UniqueCode = uniqueCode;
             Description = description;
+            Amount = amount;
             Parameters = parameters;
-            Price = price;
         }
+
     }
 }

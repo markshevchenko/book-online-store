@@ -8,65 +8,22 @@ namespace Store
     {
         public int Id { get; }
 
-        public OrderItemCollection Items { get; }
-
-        public OrderState State { get; private set; }
-
-        private string cellPhone;
-        public string CellPhone
+        private List<OrderItem> items;
+        public IReadOnlyCollection<OrderItem> Items
         {
-            get { return cellPhone; }
-            set
-            {
-                if (State != OrderState.Created && State != OrderState.Pushed)
-                    throw new InvalidOperationException("Invalid state.");
-
-                if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException(nameof(CellPhone));
-
-                cellPhone = value;
-                State = OrderState.Pushed;
-            }
+            get { return items; }
         }
 
-        private OrderDelivery delivery;
-        public OrderDelivery Delivery
-        {
-            get { return delivery; }
-            set
-            {
-                if (State != OrderState.Created && State != OrderState.Pushed)
-                    throw new InvalidOperationException("Invalid state.");
+        public string CellPhone { get; set; }
 
-                if (value == null)
-                    throw new ArgumentNullException(nameof(Delivery));
+        public OrderDelivery Delivery { get; set; }
 
-                State = OrderState.Pushed;
-                delivery = value;
-            }
-        }
+        public OrderPayment Payment { get; set; }
 
-        private OrderPayment payment;
-        public OrderPayment Payment
-        {
-            get { return payment; }
-            set
-            {
-                if (State != OrderState.Created && State != OrderState.Pushed)
-                    throw new InvalidOperationException("Invalid state.");
+        public int TotalCount => items.Sum(item => item.Count);
 
-                if (value == null)
-                    throw new ArgumentNullException(nameof(Payment));
-
-                State = OrderState.Pushed;
-                payment = value;
-            }
-        }
-
-        public int TotalCount => Items.Sum(item => item.Count);
-
-        public decimal TotalAmount => Items.Sum(item => item.Price * item.Count)
-                                    + (Delivery?.Price ?? 0m);
+        public decimal TotalPrice => items.Sum(item => item.Price * item.Count)
+                                   + (Delivery?.Amount ?? 0m);
 
         public Order(int id, IEnumerable<OrderItem> items)
         {
@@ -74,8 +31,48 @@ namespace Store
                 throw new ArgumentNullException(nameof(items));
 
             Id = id;
-            State = OrderState.Created;
-            Items = new OrderItemCollection(this, items);
+
+            this.items = new List<OrderItem>(items);
+        }
+
+        public OrderItem GetItem(int bookId)
+        {
+            int index = items.FindIndex(item => item.BookId == bookId);
+            if (index == -1)
+                ThrowBookException("Book not found.", bookId);
+
+            return items[index];
+        }
+
+        public void AddOrUpdateItem(Book book, int count)
+        {
+            if (book == null)
+                throw new ArgumentNullException(nameof(book));
+
+            int index = items.FindIndex(item => item.BookId == book.Id);
+            if (index == -1)
+                items.Add(new OrderItem(book.Id, count, book.Price));
+            else
+                items[index].Count += count;
+        }
+
+        public void RemoveItem(int bookId)
+        {
+            int index = items.FindIndex(item => item.BookId == bookId);
+
+            if (index == -1)
+                ThrowBookException("Order does not contain specified item.", bookId);
+
+            items.RemoveAt(index);
+        }
+
+        private void ThrowBookException(string message, int bookId)
+        {
+            var exception = new InvalidOperationException(message);
+
+            exception.Data["BookId"] = bookId;
+
+            throw exception;
         }
     }
 }

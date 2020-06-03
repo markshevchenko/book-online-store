@@ -4,11 +4,7 @@ namespace Store
 {
     public class OrderItem
     {
-        private readonly Order order;
-
         public int BookId { get; }
-
-        public decimal Price { get; }
 
         private int count;
         public int Count
@@ -16,24 +12,21 @@ namespace Store
             get { return count; }
             set
             {
-                if (order.State != OrderState.Created)
-                    throw new InvalidOperationException("Invalid order state.");
-
                 ThrowIfInvalidCount(value);
 
                 count = value;
             }
         }
 
-        public OrderItem(Order order, int bookId, decimal price, int count)
+        public decimal Price { get; }
+
+        public OrderItem(int bookId, int count, decimal price)
         {
             ThrowIfInvalidCount(count);
 
-            this.order = order;
-
             BookId = bookId;
-            Price = price;
             Count = count;
+            Price = price;
         }
 
         private static void ThrowIfInvalidCount(int count)

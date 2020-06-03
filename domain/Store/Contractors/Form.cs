@@ -6,7 +6,7 @@ namespace Store.Contractors
 {
     public class Form
     {
-        public Guid Uid { get; }
+        public string UniqueCode { get; }
 
         public int OrderId { get; }
 
@@ -16,15 +16,18 @@ namespace Store.Contractors
 
         public IReadOnlyList<Field> Fields { get; }
 
-        public Form(Guid uid, int orderId, int step, bool isFinal, IEnumerable<Field> fields)
+        public Form(string uniqueCode, int orderId, int step, bool isFinal, IEnumerable<Field> fields)
         {
+            if (string.IsNullOrWhiteSpace(uniqueCode))
+                throw new ArgumentException(nameof(uniqueCode));
+
             if (step < 1)
                 throw new ArgumentOutOfRangeException(nameof(step));
 
             if (fields == null)
                 throw new ArgumentNullException(nameof(fields));
 
-            Uid = uid;
+            UniqueCode = uniqueCode;
             OrderId = orderId;
             Step = step;
             IsFinal = isFinal;

@@ -1,4 +1,8 @@
-﻿namespace Store
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Store
 {
     public class BookService
     {
@@ -9,16 +13,12 @@
             this.bookRepository = bookRepository;
         }
 
-        public Book[] GetAllBooksByQuery(string query)
+        public Book[] GetAllByQuery(string query)
         {
-            if (Book.IsIsbnValid(query))
-            {
-                var normalizedIsbn = Book.NormalizeIsbn(query);
+            if (Book.IsIsbn(query))
+                return bookRepository.GetAllByIsbn(query);
 
-                return bookRepository.GetAllByIsbn(normalizedIsbn);
-            }
-
-            return bookRepository.GetAllByAuthorOrTitle(query);
+            return bookRepository.GetAllByTitleOrAuthor(query);
         }
     }
 }

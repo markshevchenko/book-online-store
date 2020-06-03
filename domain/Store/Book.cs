@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Store
 {
@@ -27,24 +26,16 @@ namespace Store
             Price = price;
         }
 
-        internal static bool IsIsbnValid(string isbn)
+        internal static bool IsIsbn(string s)
         {
-            if (isbn == null)
+            if (s == null)
                 return false;
 
-            var normalizedIsbn = NormalizeIsbn(isbn);
+            s = s.Replace("-", "")
+                 .Replace(" ", "")
+                 .ToUpper();
 
-            return Regex.IsMatch(normalizedIsbn, "^ISBN\\d{10}(\\d{3})?$");
-        }
-
-        internal static string NormalizeIsbn(string isbn)
-        {
-            if (isbn == null)
-                throw new ArgumentNullException(nameof(isbn));
-
-            return isbn.Replace("-", "")
-                       .Replace(" ", "")
-                       .ToUpper();
+            return Regex.IsMatch(s, @"^ISBN\d{10}(\d{3})?$");
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 using Xunit;
 
 namespace Store.Tests
@@ -6,81 +6,139 @@ namespace Store.Tests
     public class OrderTests
     {
         [Fact]
+        public void Order_WithNullItems_ThrowsArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Order(1, null));
+        }
+
+        [Fact]
         public void TotalCount_WithEmptyItems_ReturnsZero()
         {
-            var order = new Order(1, Enumerable.Empty<OrderItem>());
+            var order = new Order(1, new OrderItem[0]);
 
             Assert.Equal(0, order.TotalCount);
         }
 
         [Fact]
-        public void TotalCount_WithNonEmptyItems_CalculatesTotalCount()
+        public void TotalPrice_WithEmptyItems_ReturnsZero()
         {
+            var order = new Order(1, new OrderItem[0]);
 
-            var order = new Order(1, Enumerable.Empty<OrderItem>());
-            order.Items.Add(bookId: 1, price: 10m, count: 3);
-            order.Items.Add(bookId: 2, price: 100m, count: 5);
+            Assert.Equal(0m, order.TotalCount);
+        }
+
+        [Fact]
+        public void TotalCount_WithNonEmptyItems_CalcualtesTotalCount()
+        {
+            var order = new Order(1, new[]
+            {
+                new OrderItem(1, 3, 10m),
+                new OrderItem(2, 5, 100m),
+            });
 
             Assert.Equal(3 + 5, order.TotalCount);
         }
 
         [Fact]
-        public void TotalAmount_WithEmptyItems_ReturnsZero()
+        public void TotalPrice_WithNonEmptyItems_CalcualtesTotalPrice()
         {
-            var order = new Order(1, Enumerable.Empty<OrderItem>());
+            var order = new Order(1, new[]
+            {
+                new OrderItem(1, 3, 10m),
+                new OrderItem(2, 5, 100m),
+            });
 
-            Assert.Equal(0m, order.TotalAmount);
+            Assert.Equal(3 * 10m + 5 * 100m, order.TotalPrice);
         }
 
         [Fact]
-        public void TotalAmount_WithNonEmptyItems_CalculatsTotalAmount()
+        public void GetItem_WithExistingItem_ReturnsItem()
         {
-            var order = new Order(1, Enumerable.Empty<OrderItem>());
-            order.Items.Add(1, 10m, 3);
-            order.Items.Add(2, 100m, 5);
+            var order = new Order(1, new[]
+            {
+                new OrderItem(1, 3, 10m),
+                new OrderItem(2, 5, 100m),
+            });
 
-            Assert.Equal(3 * 10m + 5 * 100m, order.TotalAmount);
-        }
+            var orderItem = order.GetItem(1);
 
-        const int bookId1 = 2;
-        const decimal bookPrice1 = 10m;
-
-        const int bookId2 = 3;
-        const decimal bookPrice2 = 20m;
-
-        [Fact]
-        public void AddItem_WithNewBookId_AddsItem()
-        {
-            var order = new Order(1, Enumerable.Empty<OrderItem>());
-            order.Items.Add(bookId1, bookPrice1, 3);
-            order.Items.Add(bookId2, bookPrice2, 5);
-
-            Assert.Collection(order.Items,
-                              item =>
-                              {
-                                  Assert.Equal(bookId1, item.BookId);
-                                  Assert.Equal(3, item.Count);
-                              },
-                              item =>
-                              {
-                                  Assert.Equal(bookId2, item.BookId);
-                                  Assert.Equal(5, item.Count);
-                              });
+            Assert.Equal(3, orderItem.Count);
         }
 
         [Fact]
-        public void AddItem_WithExistingBookId_UpdatesItem()
+        public void GetItem_WithNonExistingItem_ThrowsInvalidOperationException()
         {
-            var order = new Order(1, Enumerable.Empty<OrderItem>());
-            order.Items.Add(bookId1, bookPrice1, 3);
-            order.Items.Add(bookId1, bookPrice1, 5);
+            var order = new Order(1, new[]
+            {
+                new OrderItem(1, 3, 10m),
+                new OrderItem(2, 5, 100m),
+            });
 
-            Assert.Collection(order.Items,
-                              item =>
-                              {
-                                  Assert.Equal(bookId1, item.BookId);
-                                  Assert.Equal(3 + 5, item.Count);
-                              });
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                order.GetItem(100);
+            });
+        }
+
+        [Fact]
+        public void AddOrUpdateItem_WithExistingItem_UpdatesCount()
+        {
+            var order = new Order(1, new[]
+            {
+                new OrderItem(1, 3, 10m),
+                new OrderItem(2, 5, 100m),
+            });
+
+            var book = new Book(1, null, null, null, null, 0m);
+
+            order.AddOrUpdateItem(book, 10);
+
+            Assert.Equal(13, order.GetItem(1).Count);
+        }
+
+        [Fact]
+        public void AddOrUpdateItem_WithNonExistingItem_AddsCount()
+        {
+            var order = new Order(1, new[]
+            {
+                new OrderItem(1, 3, 10m),
+                new OrderItem(2, 5, 100m),
+            });
+
+            var book = new Book(4, null, null, null, null, 0m);
+
+            order.AddOrUpdateItem(book, 10);
+
+            Assert.Equal(10, order.GetItem(4).Count);
+        }
+
+        [Fact]
+        public void RemoveItem_WithExistingItem_RemovesItem()
+        {
+            var order = new Order(1, new[]
+            {
+                new OrderItem(1, 3, 10m),
+                new OrderItem(2, 5, 100m),
+            });
+
+            order.RemoveItem(1);
+
+            Assert.Equal(1, order.Items.Count);
+        }
+
+        [Fact]
+        public void RemoveItem_WithNonExistingItem_ThrowsInvalidOperationException()
+        {
+            var order = new Order(1, new[]
+            {
+                new OrderItem(1, 3, 10m),
+                new OrderItem(2, 5, 100m),
+            });
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                order.RemoveItem(100);
+            });
         }
     }
 }
