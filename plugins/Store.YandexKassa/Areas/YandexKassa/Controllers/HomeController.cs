@@ -1,19 +1,32 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Store.YandexKassa.Areas.YandexKassa.Models;
+using System.Collections.Generic;
 
 namespace Store.YandexKassa.Areas.YandexKassa.Controllers
 {
     [Area("YandexKassa")]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index(Dictionary<string, string> parameters, string returnUri)
         {
-            return View();
+            var model = new ParametersModel
+            {
+                Parameters = parameters,
+                ReturnUri = returnUri,
+            };
+
+            return View(model);
         }
 
-        // /YandexKassa/Home/Callback
-        public IActionResult Callback()
+        public IActionResult Callback(Dictionary<string, string> parameters, string returnUri)
         {
-            return View();
+            var model = new ParametersModel
+            {
+                Parameters = parameters,
+                ReturnUri = returnUri,
+            };
+
+            return View(model);
         }
     }
 }

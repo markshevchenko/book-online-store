@@ -1,9 +1,22 @@
-﻿@{
+﻿@using Store.YandexKassa.Areas.YandexKassa.Models
+@model ParametersModel
+
+@{
     ViewData["Title"] = "Заказ оплачен";
 }
 
 <h1>Заказ оплачен</h1>
 
 <p>
-    <a href="@Url.Action("Finish", "Order")">Вернутся в магазин</a>.
+    Заказ оплачен. Чтобы завершить оформление, нажмите кнопку *Далее*.
 </p>
+
+<form action="@Model.ReturnUri" method="post">
+    <input type="hidden" name="serviceName" value="YandexKassa" />
+    <input type="hidden" name="step" value="1" />
+    @foreach (var parameter in Model.Parameters)
+    {
+        <input type="hidden" name="values[@parameter.Key]" value="@parameter.Value" />
+    }
+    <button type="submit" class="btn btn-success">Далее</button>
+</form>

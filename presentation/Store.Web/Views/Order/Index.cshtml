@@ -18,7 +18,7 @@
         </tr>
     </thead>
     <tbody>
-        @for (int i = 0; i < Model.Items.Length; i++)
+        @for (int i = 0; i < Model.Items.Count; i++)
         {
             <tr>
                 <td class="text-right">@(i + 1)</td>
@@ -44,8 +44,12 @@
     </tfoot>
 </table>
 
-<form action="@Url.Action("SendConfirmationCode")" method="post">
-    <input type="hidden" name="id" value="@Model.Id" />
+<p>
+    Для оформления заказа необходимо подтвердить номер вашего мобильного.
+    Введите номер и нажмите *Отправить код*. На ваш номер будет отправлен *код подтверждения*.
+</p>
+
+<form action="@Url.Action(nameof(OrderController.SendConfirmation))" method="post">
     <div class="form-group">
         <label for="cellPhone">Мобильный телефон</label>
         <input type="text" class="form-control" name="cellPhone" value="+79876543210" />
