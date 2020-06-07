@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Store.Web.App.Sessions
+namespace Store.Web.App
 {
     public static class SessionExtensions
     {

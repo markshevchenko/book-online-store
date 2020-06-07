@@ -1,4 +1,4 @@
-﻿namespace Store.Web.App.Sessions
+﻿namespace Store.Web.App
 {
     public class Cart
     {

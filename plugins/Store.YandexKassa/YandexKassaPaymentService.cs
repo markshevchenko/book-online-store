@@ -47,7 +47,7 @@ namespace Store.YandexKassa
 
         public Uri StartSession(IReadOnlyDictionary<string, string> parameters, Uri returnUri)
         {
-            var queryString = MakeQueryParameters(parameters);
+            var queryString = QueryString.Create(parameters);
             queryString += QueryString.Create("returnUri", returnUri.ToString());
 
             var builder = new UriBuilder(Request.Scheme, Request.Host.Host)
@@ -60,20 +60,6 @@ namespace Store.YandexKassa
                 builder.Port = Request.Host.Port.Value;
 
             return builder.Uri;
-        }
-
-        private QueryString MakeQueryParameters(IReadOnlyDictionary<string, string> parameters)
-        {
-            var pairs = parameters.Select(ToQueryParameter);
-
-            return QueryString.Create(pairs);
-        }
-
-        private KeyValuePair<string, string> ToQueryParameter(KeyValuePair<string, string> parameter)
-        {
-            var newKey = $"parameters[{parameter.Key}]";
-
-            return new KeyValuePair<string, string>(newKey, parameter.Value);
         }
     }
 }

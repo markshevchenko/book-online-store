@@ -1,5 +1,5 @@
 ﻿@using Store.YandexKassa.Areas.YandexKassa.Models
-@model ParametersModel
+@model ExampleModel
 
 @{
     ViewData["Title"] = "Заказ оплачен";
@@ -8,15 +8,12 @@
 <h1>Заказ оплачен</h1>
 
 <p>
-    Заказ оплачен. Чтобы завершить оформление, нажмите кнопку *Далее*.
+    Заказ оплачен. Чтобы завершить оформление, нажмите кнопку <em>Далее</em>.
 </p>
 
 <form action="@Model.ReturnUri" method="post">
     <input type="hidden" name="serviceName" value="YandexKassa" />
     <input type="hidden" name="step" value="1" />
-    @foreach (var parameter in Model.Parameters)
-    {
-        <input type="hidden" name="values[@parameter.Key]" value="@parameter.Value" />
-    }
+    <input type="hidden" name="orderId" value="@Model.OrderId" />
     <button type="submit" class="btn btn-success">Далее</button>
 </form>

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using PhoneNumbers;
 using Store.Messages;
-using Store.Web.App.Sessions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +41,7 @@ namespace Store.Web.App
             return false;
         }
 
-        protected bool TryGetOrder(out Order order)
+        internal bool TryGetOrder(out Order order)
         {
             if (Session.TryGetCart(out Cart cart))
             {
@@ -54,7 +53,7 @@ namespace Store.Web.App
             return false;
         }
 
-        private OrderModel Map(Order order)
+        internal OrderModel Map(Order order)
         {
             var books = GetBooks(order);
             var items = from item in order.Items
@@ -90,7 +89,7 @@ namespace Store.Web.App
             throw new InvalidOperationException("Empty session.");
         }
 
-        protected IEnumerable<Book> GetBooks(Order order)
+        internal IEnumerable<Book> GetBooks(Order order)
         {
             var bookIds = order.Items.Select(item => item.BookId);
 
@@ -105,14 +104,22 @@ namespace Store.Web.App
             if (!TryGetOrder(out Order order))
                 order = orderRepository.Create();
 
-            var book = bookRepository.GetById(bookId);
-            order.AddOrUpdateItem(book, count);
+            AddOrUpdateBook(order, bookId, count);
             UpdateSession(order);
 
             return Map(order);
         }
 
-        private void UpdateSession(Order order)
+        internal void AddOrUpdateBook(Order order, int bookId, int count)
+        {
+            var book = bookRepository.GetById(bookId);
+            if (order.Items.TryGet(bookId, out OrderItem orderItem))
+                orderItem.Count += count;
+            else
+                order.Items.Add(book.Id, book.Price, count);
+        }
+
+        internal void UpdateSession(Order order)
         {
             var cart = new Cart(order.Id, order.TotalCount, order.TotalPrice);
             Session.Set(cart);
@@ -121,7 +128,7 @@ namespace Store.Web.App
         public OrderModel UpdateBook(int bookId, int count)
         {
             var order = GetOrder();
-            order.GetItem(bookId).Count = count;
+            order.Items[bookId].Count = count;
             
             orderRepository.Update(order);
             UpdateSession(order);
@@ -132,7 +139,7 @@ namespace Store.Web.App
         public OrderModel RemoveBook(int bookId)
         {
             var order = GetOrder();
-            order.RemoveItem(bookId);
+            order.Items.Remove(bookId);
 
             orderRepository.Update(order);
             UpdateSession(order);
@@ -145,48 +152,49 @@ namespace Store.Web.App
             var order = GetOrder();
             var model = Map(order);
 
+            if (TryFormatPhone(cellPhone, out string formattedPhone))
+            {
+                var confirmationCode = 1111; // random.Next(1000, 10000) = 1000, 1001, ..., 9998, 9999
+                model.CellPhone = formattedPhone;
+                Session.SetInt32(formattedPhone, confirmationCode);
+                notificationService.SendConfirmationCode(formattedPhone, confirmationCode);
+            }
+            else
+                model.Errors["cellPhone"] = "Номер телефона не соответствует формату +79876543210";
+
+            return model;
+        }
+
+        internal bool TryFormatPhone(string cellPhone, out string formattedPhone)
+        {
             try
             {
                 var phoneNumber = phoneNumberUtil.Parse(cellPhone, "ru");
-                model.CellPhone = phoneNumberUtil.Format(phoneNumber, PhoneNumberFormat.INTERNATIONAL);
-
-                var confirmationCode = 1111; // random.Next(1000, 10000) = 1000, 1001, ..., 9998, 9999
-                Session.SetInt32(model.CellPhone, confirmationCode);
-                notificationService.SendConfirmationCode(cellPhone, confirmationCode);
-
+                formattedPhone = phoneNumberUtil.Format(phoneNumber, PhoneNumberFormat.INTERNATIONAL);
+                return true;
             }
             catch (NumberParseException)
             {
-                model.Errors["cellPhone"] = "Номер телефона не соответствует формату +79876543210";
+                formattedPhone = null;
+                return false;
             }
-
-            return model;
         }
 
         public OrderModel ConfirmCellPhone(string cellPhone, int confirmationCode)
         {
             int? storedCode = Session.GetInt32(cellPhone);
+            var model = new OrderModel();
+
             if (storedCode == null)
             {
-                return new OrderModel
-                {
-                    Errors = new Dictionary<string, string>
-                    {
-                        { "cellPhone",  "Что-то случилось. Попробуйте получить код ещё раз." },
-                    }
-                };
+                model.Errors["cellPhone"] = "Что-то случилось. Попробуйте получить код ещё раз.";
+                return model;
             }
 
             if (storedCode != confirmationCode)
             {
-                return new OrderModel
-                {
-                    CellPhone = cellPhone,
-                    Errors = new Dictionary<string, string>
-                    {
-                        { "confirmationCode",  "Неверный код. Проверьте и попробуйте ещё раз." },
-                    }
-                };
+                model.Errors["confirmationCode"] = "Неверный код. Проверьте и попробуйте ещё раз.";
+                return model;
             }
 
             var order = GetOrder();
@@ -212,6 +220,7 @@ namespace Store.Web.App
             var order = GetOrder();
             order.Payment = payment;
             orderRepository.Update(order);
+            Session.RemoveCart();
 
             return Map(order);
         }

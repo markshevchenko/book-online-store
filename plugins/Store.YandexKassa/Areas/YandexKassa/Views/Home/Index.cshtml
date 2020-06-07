@@ -1,6 +1,6 @@
 ﻿@using Store.YandexKassa.Areas.YandexKassa.Controllers
 @using Store.YandexKassa.Areas.YandexKassa.Models
-@model  ParametersModel
+@model  ExampleModel
 
 @{
     ViewData["Title"] = "Яндекс.Касса";
@@ -14,10 +14,7 @@
 </p>
 
 <form action="@Url.Action(nameof(HomeController.Callback), "Home", new { area = "YandexKassa" })" method="post">
-@foreach (var parameter in Model.Parameters)
-{
-    <input type="hidden" name="parameters[@parameter.Key]" value="@parameter.Value" />
-}
+    <input type="hidden" name="orderId" value="@Model.OrderId" />
     <input type="hidden" name="returnUri" value="@Model.ReturnUri" />
     <button type="submit" class="btn btn-success">Оплатить</button>
 </form>
