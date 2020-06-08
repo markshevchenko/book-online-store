@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Store.Data;
+using System;
 using Xunit;
 
 namespace Store.Tests
@@ -6,39 +7,40 @@ namespace Store.Tests
     public class OrderItemTests
     {
         [Fact]
-        public void OrderItem_WithZeroCount_ThrowsArgumentOutOfRangeException()
+        public void CreateDto_WithZeroCount_ThrowsArgumentOutOfRangeException()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 int count = 0;
-                new OrderItem(1, 0m, count);
+                OrderItem.Factory.CreateDto(new OrderDto(), 1, 10m, count);
             });
         }
 
         [Fact]
-        public void OrderItem_WithNegativeCount_ThrowsArgumentOutOfRangeException()
+        public void CreateDto_WithNegativeCount_ThrowsArgumentOutOfRangeException()
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 int count = -1;
-                new OrderItem(1, 0m, count);
+                OrderItem.Factory.CreateDto(new OrderDto(), 1, 10m, count);
             });
         }
 
         [Fact]
-        public void OrderItem_WithPositiveCount_SetsCount()
+        public void CreateDto_WithPositiveCount_SetsCount()
         {
-            var orderItem = new OrderItem(1, 3m, 2);
+            var orderItem = OrderItem.Factory.CreateDto(new OrderDto(), 1, 10m, 30);
 
             Assert.Equal(1, orderItem.BookId);
-            Assert.Equal(2, orderItem.Count);
-            Assert.Equal(3m, orderItem.Price);
+            Assert.Equal(10m, orderItem.Price);
+            Assert.Equal(30, orderItem.Count);
         }
 
         [Fact]
         public void Count_WithNegativeValue_ThrowsArgumentOfRangeException()
         {
-            var orderItem = new OrderItem(0, 0m, 5);
+            var orderItemDto = OrderItem.Factory.CreateDto(new OrderDto(), 1, 10m, 30);
+            var orderItem = OrderItem.Mapper.ToDomain(orderItemDto);
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
@@ -49,7 +51,8 @@ namespace Store.Tests
         [Fact]
         public void Count_WithZeroValue_ThrowsArgumentOfRangeException()
         {
-            var orderItem = new OrderItem(0, 0m, 5);
+            var orderItemDto = OrderItem.Factory.CreateDto(new OrderDto(), 1, 10m, 30);
+            var orderItem = OrderItem.Mapper.ToDomain(orderItemDto);
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
@@ -60,7 +63,8 @@ namespace Store.Tests
         [Fact]
         public void Count_WithPositiveValue_SetsValue()
         {
-            var orderItem = new OrderItem(0, 0m, 5);
+            var orderItemDto = OrderItem.Factory.CreateDto(new OrderDto(), 1, 10m, 30);
+            var orderItem = OrderItem.Mapper.ToDomain(orderItemDto);
 
             orderItem.Count = 10;
 
