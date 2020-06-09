@@ -35,9 +35,7 @@ namespace Store.Web
                 options.Cookie.IsEssential = true;
             });
 
-            var connectionString = Environment.GetEnvironmentVariable("STORE_CONNECTION_STRING")
-                                ?? @"Data Source=.\SQLEXPRESS; Initial Catalog=Store";
-            services.AddEfRepositories(connectionString);
+            services.AddEfRepositories(Configuration.GetConnectionString("Store"));
 
             services.AddSingleton<INotificationService, DebugNotificationService>();
             services.AddSingleton<IDeliveryService, PostamateDeliveryService>();

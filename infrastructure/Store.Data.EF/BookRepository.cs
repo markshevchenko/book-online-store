@@ -8,15 +8,17 @@ namespace Store.Data.EF
 {
     internal class BookRepository : IBookRepository
     {
-        private readonly StoreDbContext dbContext;
+        private readonly DbContextFactory dbContextFactory;
 
-        public BookRepository(StoreDbContext dbContext)
+        public BookRepository(DbContextFactory dbContextFactory)
         {
-            this.dbContext = dbContext;
+            this.dbContextFactory = dbContextFactory;
         }
 
         public Book[] GetAllByIds(IEnumerable<int> bookIds)
         {
+            var dbContext = dbContextFactory.Create(typeof(BookRepository));
+
             return dbContext.Books
                             .Where(book => bookIds.Contains(book.Id))
                             .Select(Book.Mapper.ToDomain)
@@ -25,6 +27,8 @@ namespace Store.Data.EF
 
         public Book[] GetAllByIsbn(string isbn)
         {
+            var dbContext = dbContextFactory.Create(typeof(BookRepository));
+
             if (Book.TryFormatIsbn(isbn, out string formattedIsbn))
             {
                 return dbContext.Books
@@ -38,6 +42,8 @@ namespace Store.Data.EF
 
         public Book[] GetAllByTitleOrAuthor(string titleOrAuthor)
         {
+            var dbContext = dbContextFactory.Create(typeof(BookRepository));
+
             var parameter = new SqlParameter("@titleOrAuthor", titleOrAuthor);
             return dbContext.Books
                             .FromSqlRaw(
@@ -50,6 +56,8 @@ namespace Store.Data.EF
 
         public Book GetById(int id)
         {
+            var dbContext = dbContextFactory.Create(typeof(BookRepository));
+
             var dto = dbContext.Books
                                .Single(book => book.Id == id);
 

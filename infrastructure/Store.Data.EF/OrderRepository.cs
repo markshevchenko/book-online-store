@@ -5,15 +5,17 @@ namespace Store.Data.EF
 {
     internal class OrderRepository : IOrderRepository
     {
-        private readonly StoreDbContext dbContext;
+        private readonly DbContextFactory dbContextFactory;
 
-        public OrderRepository(StoreDbContext dbContext)
+        public OrderRepository(DbContextFactory dbContextFactory)
         {
-            this.dbContext = dbContext;
+            this.dbContextFactory = dbContextFactory;
         }
 
         public Order Create()
         {
+            var dbContext = dbContextFactory.Create(typeof(OrderRepository));
+
             var dto = Order.Factory.CreateDto();
             dbContext.Orders.Add(dto);
             dbContext.SaveChanges();
@@ -23,6 +25,8 @@ namespace Store.Data.EF
 
         public Order GetById(int id)
         {
+            var dbContext = dbContextFactory.Create(typeof(OrderRepository));
+
             var dto = dbContext.Orders
                                .Include(order => order.Items)
                                .Single(order => order.Id == id);
@@ -32,6 +36,8 @@ namespace Store.Data.EF
 
         public void Update(Order order)
         {
+            var dbContext = dbContextFactory.Create(typeof(OrderRepository));
+
             dbContext.SaveChanges();
         }
     }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
 
 namespace Store.Data.EF
 {
@@ -14,8 +16,10 @@ namespace Store.Data.EF
                 },
                 ServiceLifetime.Transient);
 
-            services.AddScoped<IBookRepository, IBookRepository>();
-            services.AddScoped<IOrderRepository, IOrderRepository>();
+            services.AddScoped<Dictionary<Type, StoreDbContext>>();
+            services.AddSingleton<DbContextFactory>();
+            services.AddSingleton<IBookRepository, BookRepository>();
+            services.AddSingleton<IOrderRepository, OrderRepository>();
 
             return services;
         }
