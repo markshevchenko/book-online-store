@@ -22,8 +22,6 @@ namespace Store.Data
 
         public Dictionary<string, string> PaymentParameters { get; set; }
         
-        public OrderPayment Payment { get; set; }
-
         public IList<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();
     }
 }
