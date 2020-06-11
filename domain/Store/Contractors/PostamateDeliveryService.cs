@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Store.Contractors
 {
@@ -37,10 +38,10 @@ namespace Store.Contractors
 
         public string Title => "Доставка через постаматы в Москве и Санкт-Перербурге";
 
-        public Form FirstForm(int orderId, IEnumerable<Book> books)
+        public Form FirstForm(Order order)
         {
             return Form.CreateFirst(Name)
-                       .AddParameter(nameof(orderId), orderId.ToString())
+                       .AddParameter("orderId", order.Id.ToString())
                        .AddField(new SelectionField("Город", "city", "1", cities));
         }
 

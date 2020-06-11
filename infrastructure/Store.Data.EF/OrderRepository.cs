@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Store.Data.EF
 {
-    internal class OrderRepository : IOrderRepository
+    class OrderRepository : IOrderRepository
     {
         private readonly DbContextFactory dbContextFactory;
 
@@ -16,11 +16,11 @@ namespace Store.Data.EF
         {
             var dbContext = dbContextFactory.Create(typeof(OrderRepository));
 
-            var dto = Order.Factory.CreateDto();
+            var dto = Order.DtoFactory.Create();
             dbContext.Orders.Add(dto);
             dbContext.SaveChanges();
 
-            return Order.Mapper.ToDomain(dto);
+            return Order.Mapper.Map(dto);
         }
 
         public Order GetById(int id)
@@ -31,7 +31,7 @@ namespace Store.Data.EF
                                .Include(order => order.Items)
                                .Single(order => order.Id == id);
 
-            return Order.Mapper.ToDomain(dto);
+            return Order.Mapper.Map(dto);
         }
 
         public void Update(Order order)

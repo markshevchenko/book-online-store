@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Store.Data.EF
 {
-    internal class BookRepository : IBookRepository
+    class BookRepository : IBookRepository
     {
         private readonly DbContextFactory dbContextFactory;
 
@@ -21,7 +21,8 @@ namespace Store.Data.EF
 
             return dbContext.Books
                             .Where(book => bookIds.Contains(book.Id))
-                            .Select(Book.Mapper.ToDomain)
+                            .AsEnumerable()
+                            .Select(Book.Mapper.Map)
                             .ToArray();
         }
 
@@ -33,7 +34,8 @@ namespace Store.Data.EF
             {
                 return dbContext.Books
                                 .Where(book => book.Isbn == formattedIsbn)
-                                .Select(Book.Mapper.ToDomain)
+                                .AsEnumerable()
+                                .Select(Book.Mapper.Map)
                                 .ToArray();
             }
 
@@ -46,11 +48,10 @@ namespace Store.Data.EF
 
             var parameter = new SqlParameter("@titleOrAuthor", titleOrAuthor);
             return dbContext.Books
-                            .FromSqlRaw(
-                                "SELECT * FROM Books WHERE CONTAINS((Author, Title), @titleOrAuthor)",
-                                parameter)
+                            .FromSqlRaw("SELECT * FROM Books WHERE CONTAINS((Author, Title), @titleOrAuthor)",
+                                        parameter)
                             .AsEnumerable()
-                            .Select(Book.Mapper.ToDomain)
+                            .Select(Book.Mapper.Map)
                             .ToArray();
         }
 
@@ -61,7 +62,7 @@ namespace Store.Data.EF
             var dto = dbContext.Books
                                .Single(book => book.Id == id);
 
-            return Book.Mapper.ToDomain(dto);
+            return Book.Mapper.Map(dto);
         }
     }
 }

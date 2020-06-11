@@ -77,7 +77,7 @@ namespace Store.Web.Controllers
 
             var deliveryMethods = deliveryServices.ToDictionary(service => service.Name,
                                                                 service => service.Title);
-            
+
             return View("DeliveryMethod", deliveryMethods);
         }
 
@@ -86,8 +86,7 @@ namespace Store.Web.Controllers
         {
             var deliveryService = deliveryServices.Single(service => service.Name == serviceName);
             var order = orderService.GetOrder();
-            var books = orderService.GetOrderBooks();
-            var form = deliveryService.FirstForm(order.Id, books);
+            var form = deliveryService.FirstForm(order);
 
             var webContractorService = webContractorServices.SingleOrDefault(service => service.Name == serviceName);
             if (webContractorService == null)
@@ -135,8 +134,8 @@ namespace Store.Web.Controllers
         public IActionResult StartPayment(string serviceName)
         {
             var paymentService = paymentServices.Single(service => service.Name == serviceName);
-            var orderId = orderService.GetOrder().Id;
-            var form = paymentService.FirstForm(orderId);
+            var order = orderService.GetOrder();
+            var form = paymentService.FirstForm(order);
 
             var webContractorService = webContractorServices.SingleOrDefault(service => service.Name == serviceName);
             if (webContractorService == null)

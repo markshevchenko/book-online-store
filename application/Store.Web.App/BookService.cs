@@ -14,7 +14,9 @@ namespace Store.Web.App
 
         public BookModel GetById(int id)
         {
-            return Map(bookRepository.GetById(id));
+            var book = bookRepository.GetById(id);
+
+            return Map(book);
         }
 
         public IReadOnlyCollection<BookModel> GetAllByQuery(string query)
@@ -36,7 +38,7 @@ namespace Store.Web.App
                 Title = book.Title,
                 Author = book.Author,
                 Description = book.Description,
-                Price = book.Price
+                Price = book.Price,
             };
         }
     }

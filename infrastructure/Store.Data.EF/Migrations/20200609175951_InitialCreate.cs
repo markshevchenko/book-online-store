@@ -29,8 +29,8 @@ namespace Store.Data.EF.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CellPhone = table.Column<string>(maxLength: 15, nullable: true),
-                    DeliveryServiceName = table.Column<string>(maxLength: 40, nullable: true),
+                    CellPhone = table.Column<string>(maxLength: 20, nullable: true),
+                    DeliveryUniqueCode = table.Column<string>(maxLength: 40, nullable: true),
                     DeliveryDescription = table.Column<string>(nullable: true),
                     DeliveryPrice = table.Column<decimal>(type: "money", nullable: false),
                     DeliveryParameters = table.Column<string>(nullable: true),

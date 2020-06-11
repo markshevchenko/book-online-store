@@ -8,7 +8,7 @@ namespace Store.Contractors
 
         string Title { get; }
 
-        Form FirstForm(int orderId);
+        Form FirstForm(Order order);
 
         Form NextForm(int step, IReadOnlyDictionary<string, string> values);
 

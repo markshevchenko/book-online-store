@@ -9,10 +9,10 @@
     <div class="form-group">
         <label for="code">Способ оплаты:</label>
         <select class="form-control" name="serviceName">
-            @foreach (var method in Model)
-            {
-                <option value="@method.Key">@method.Value</option>
-            }
+        @foreach (var method in Model)
+        {
+            <option value="@method.Key">@method.Value</option>
+        }
         </select>
     </div>
     <button type="submit" class="btn btn-success">Далее</button>

@@ -17,7 +17,7 @@ namespace Store.Data.EF
         public StoreDbContext Create(Type repositoryType)
         {
             var services = httpContextAccessor.HttpContext.RequestServices;
-            
+
             var dbContexts = services.GetService<Dictionary<Type, StoreDbContext>>();
             if (!dbContexts.ContainsKey(repositoryType))
                 dbContexts[repositoryType] = services.GetService<StoreDbContext>();

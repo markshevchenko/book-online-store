@@ -14,6 +14,6 @@
 <form action="@Model.ReturnUri" method="post">
     <input type="hidden" name="serviceName" value="YandexKassa" />
     <input type="hidden" name="step" value="1" />
-    <input type="hidden" name="orderId" value="@Model.OrderId" />
+    <input type="hidden" name="values[orderId]" value="@Model.OrderId" />
     <button type="submit" class="btn btn-success">Далее</button>
 </form>

@@ -14,7 +14,7 @@ namespace Store.Data.EF.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.4")
+                .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -97,7 +97,7 @@ namespace Store.Data.EF.Migrations
                     b.Property<decimal>("DeliveryPrice")
                         .HasColumnType("money");
 
-                    b.Property<string>("DeliveryServiceName")
+                    b.Property<string>("DeliveryUniqueCode")
                         .HasColumnType("nvarchar(40)")
                         .HasMaxLength(40);
 

@@ -14,8 +14,6 @@ namespace Store.Web.App
         private readonly INotificationService notificationService;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        private readonly PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.GetInstance();
-
         protected ISession Session => httpContextAccessor.HttpContext.Session;
 
         public OrderService(IBookRepository bookRepository,
@@ -57,15 +55,15 @@ namespace Store.Web.App
         {
             var books = GetBooks(order);
             var items = from item in order.Items
-                             join book in books on item.BookId equals book.Id
-                             select new OrderItemModel
-                             {
-                                 BookId = book.Id,
-                                 Title = book.Title,
-                                 Author = book.Author,
-                                 Price = item.Price,
-                                 Count = item.Count,
-                             };
+                        join book in books on item.BookId equals book.Id
+                        select new OrderItemModel
+                        {
+                            BookId = book.Id,
+                            Title = book.Title,
+                            Author = book.Author,
+                            Price = item.Price,
+                            Count = item.Count,
+                        };
 
             return new OrderModel
             {
@@ -73,20 +71,10 @@ namespace Store.Web.App
                 Items = items.ToArray(),
                 TotalCount = order.TotalCount,
                 TotalPrice = order.TotalPrice,
+                CellPhone = order.CellPhone,
+                DeliveryDescription = order.Delivery?.Description,
+                PaymentDescription = order.Payment?.Description
             };
-        }
-
-        public IEnumerable<Book> GetOrderBooks()
-        {
-            return GetBooks(GetOrder());
-        }
-
-        public Order GetOrder()
-        {
-            if (TryGetOrder(out Order order))
-                return order;
-
-            throw new InvalidOperationException("Empty session.");
         }
 
         internal IEnumerable<Book> GetBooks(Order order)
@@ -99,7 +87,7 @@ namespace Store.Web.App
         public OrderModel AddBook(int bookId, int count)
         {
             if (count < 1)
-                throw new InvalidOperationException("Too few books to add.");
+                throw new InvalidOperationException("Too few books to add");
 
             if (!TryGetOrder(out Order order))
                 order = orderRepository.Create();
@@ -130,8 +118,8 @@ namespace Store.Web.App
         public OrderModel UpdateBook(int bookId, int count)
         {
             var order = GetOrder();
-            order.Items[bookId].Count = count;
-            
+            order.Items.Get(bookId).Count = count;
+
             orderRepository.Update(order);
             UpdateSession(order);
 
@@ -149,6 +137,14 @@ namespace Store.Web.App
             return Map(order);
         }
 
+        public Order GetOrder()
+        {
+            if (TryGetOrder(out Order order))
+                return order;
+
+            throw new InvalidOperationException("Empty session.");
+        }
+
         public OrderModel SendConfirmation(string cellPhone)
         {
             var order = GetOrder();
@@ -156,7 +152,7 @@ namespace Store.Web.App
 
             if (TryFormatPhone(cellPhone, out string formattedPhone))
             {
-                var confirmationCode = 1111; // random.Next(1000, 10000) = 1000, 1001, ..., 9998, 9999
+                var confirmationCode = 1111; // todo: random.Next(1000, 10000) = 1000, 1001, ..., 9998, 9999
                 model.CellPhone = formattedPhone;
                 Session.SetInt32(formattedPhone, confirmationCode);
                 notificationService.SendConfirmationCode(formattedPhone, confirmationCode);
@@ -166,6 +162,8 @@ namespace Store.Web.App
 
             return model;
         }
+
+        private readonly PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.GetInstance();
 
         internal bool TryFormatPhone(string cellPhone, out string formattedPhone)
         {

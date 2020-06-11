@@ -7,7 +7,7 @@
 <h1>Подтверждение мобильного</h1>
 
 <p>
-    Введите *код подтверждения* из SMS.
+    Введите <em>код подтверждения</em> из SMS.
 </p>
 
 <form action="@Url.Action(nameof(OrderController.ConfirmCellPhone))" method="post">
@@ -28,7 +28,7 @@
     повторите отправку кода.
 </p>
 
-<form action="@Url.Action(nameof(OrderController.SendConfirmation))" method="post">
+<form action="@Url.Action("SendConfirmationCode")" method="post">
     <div class="form-group">
         <label for="cellPhone">Мобильный телефон</label>
         <input type="text" class="form-control" name="cellPhone" value="@Model.CellPhone" />
@@ -37,5 +37,5 @@
             <small class="form-text text-danger">@Model.Errors["cellPhone"]</small>
         }
     </div>
-    <button type="submit" class="btn btn-success">Повторить отправку кода</button>
+    <button type="submit" class="btn btn-success">Повторить код</button>
 </form>

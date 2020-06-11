@@ -8,11 +8,11 @@ namespace Store.Tests
     public class OrderItemCollectionTests
     {
         [Fact]
-        public void IndexerGet_WithExistingItem_ReturnsItem()
+        public void Get_WithExistingItem_ReturnsItem()
         {
             var order = CreateTestOrder();
 
-            var orderItem = order.Items[1];
+            var orderItem = order.Items.Get(1);
 
             Assert.Equal(3, orderItem.Count);
         }
@@ -29,37 +29,36 @@ namespace Store.Tests
                 }
             });
         }
-
         [Fact]
-        public void IndexerGet_WithNonExistingItem_ThrowsInvalidOperationException()
+        public void Get_WithNonExistingItem_ThrowsInvalidOperationException()
         {
             var order = CreateTestOrder();
 
             Assert.Throws<InvalidOperationException>(() =>
             {
-                var item = order.Items[100];
+                order.Items.Get(100);
             });
         }
 
         [Fact]
-        public void Add_WithExistingItem_ThrowsInvalidOperationException()
+        public void Add_WithExistingItem_ThrowInvalidOperationException()
         {
             var order = CreateTestOrder();
 
             Assert.Throws<InvalidOperationException>(() =>
             {
-                order.Items.Add(1, 10m, 3);
+                order.Items.Add(1, 10m, 10);
             });
         }
 
         [Fact]
-        public void Add_WithNewItem_AddsCount()
+        public void Add_WithNewItem_SetsCount()
         {
             var order = CreateTestOrder();
 
             order.Items.Add(4, 30m, 10);
 
-            Assert.Equal(10, order.Items[4].Count);
+            Assert.Equal(10, order.Items.Get(4).Count);
         }
 
         [Fact]

@@ -1,4 +1,5 @@
 ﻿using Store.Data;
+using System;
 using Xunit;
 
 namespace Store.Tests

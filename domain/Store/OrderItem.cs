@@ -37,13 +37,13 @@ namespace Store
                 throw new ArgumentOutOfRangeException("Count must be greater than zero.");
         }
 
-        public static class Factory
+        public static class DtoFactory
         {
-            public static OrderItemDto CreateDto(OrderDto order, int bookId, decimal price, int count)
+            public static OrderItemDto Create(OrderDto order, int bookId, decimal price, int count)
             {
                 if (order == null)
                     throw new ArgumentNullException(nameof(order));
-                
+
                 ThrowIfInvalidCount(count);
 
                 return new OrderItemDto
@@ -58,9 +58,9 @@ namespace Store
 
         public static class Mapper
         {
-            public static OrderItem ToDomain(OrderItemDto dto) => new OrderItem(dto);
+            public static OrderItem Map(OrderItemDto dto) => new OrderItem(dto);
 
-            public static OrderItemDto ToDto(OrderItem domain) => domain.dto;
+            public static OrderItemDto Map(OrderItem domain) => domain.dto;
         }
     }
 }

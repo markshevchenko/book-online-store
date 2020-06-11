@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Store.Data.EF
 {
-    public static class ServerCollectionExtensions
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddEfRepositories(this IServiceCollection services, string connectionString)
         {
@@ -14,7 +14,8 @@ namespace Store.Data.EF
                 {
                     options.UseSqlServer(connectionString);
                 },
-                ServiceLifetime.Transient);
+                ServiceLifetime.Transient
+            );
 
             services.AddScoped<Dictionary<Type, StoreDbContext>>();
             services.AddSingleton<DbContextFactory>();

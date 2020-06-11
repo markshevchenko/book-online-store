@@ -8,7 +8,7 @@ namespace Store.Data
 
         public string CellPhone { get; set; }
 
-        public string DeliveryServiceName { get; set; }
+        public string DeliveryUniqueCode { get; set; }
 
         public string DeliveryDescription { get; set; }
 
@@ -21,7 +21,7 @@ namespace Store.Data
         public string PaymentDescription { get; set; }
 
         public Dictionary<string, string> PaymentParameters { get; set; }
-        
+
         public IList<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();
     }
 }

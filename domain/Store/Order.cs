@@ -26,11 +26,11 @@ namespace Store
         {
             get
             {
-                if (dto.DeliveryServiceName == null)
+                if (dto.DeliveryUniqueCode == null)
                     return null;
 
                 return new OrderDelivery(
-                    dto.DeliveryServiceName,
+                    dto.DeliveryUniqueCode,
                     dto.DeliveryDescription,
                     dto.DeliveryPrice,
                     dto.DeliveryParameters);
@@ -40,9 +40,9 @@ namespace Store
                 if (value == null)
                     throw new ArgumentException(nameof(Delivery));
 
-                dto.DeliveryServiceName = value.UniqueCode;
+                dto.DeliveryUniqueCode = value.UniqueCode;
                 dto.DeliveryDescription = value.Description;
-                dto.DeliveryPrice = value.Amount;
+                dto.DeliveryPrice = value.Price;
                 dto.DeliveryParameters = value.Parameters
                                               .ToDictionary(p => p.Key, p => p.Value);
             }
@@ -72,12 +72,12 @@ namespace Store
             }
         }
 
+        public OrderItemCollection Items { get; }
+
         public int TotalCount => Items.Sum(item => item.Count);
 
         public decimal TotalPrice => Items.Sum(item => item.Price * item.Count)
-                                   + (Delivery?.Amount ?? 0m);
-
-        public OrderItemCollection Items { get; }
+                                   + (Delivery?.Price ?? 0m);
 
         public Order(OrderDto dto)
         {
@@ -85,16 +85,16 @@ namespace Store
             Items = new OrderItemCollection(dto);
         }
 
-        public static class Factory
+        public static class DtoFactory
         {
-            public static OrderDto CreateDto() => new OrderDto();
+            public static OrderDto Create() => new OrderDto();
         }
 
         public static class Mapper
         {
-            public static Order ToDomain(OrderDto dto) => new Order(dto);
+            public static Order Map(OrderDto dto) => new Order(dto);
 
-            public static OrderDto ToDto(Order domain) => domain.dto;
+            public static OrderDto Map(Order domain) => domain.dto;
         }
     }
 }

@@ -9,14 +9,14 @@ using Store.Data.EF;
 namespace Store.Data.EF.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20200609115248_IncreaseCellPhoneLength")]
-    partial class IncreaseCellPhoneLength
+    [Migration("20200609175951_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.4")
+                .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -99,7 +99,7 @@ namespace Store.Data.EF.Migrations
                     b.Property<decimal>("DeliveryPrice")
                         .HasColumnType("money");
 
-                    b.Property<string>("DeliveryServiceName")
+                    b.Property<string>("DeliveryUniqueCode")
                         .HasColumnType("nvarchar(40)")
                         .HasMaxLength(40);
 

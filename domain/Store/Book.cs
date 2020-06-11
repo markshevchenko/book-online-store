@@ -73,19 +73,21 @@ namespace Store
         }
 
         public static bool IsIsbn(string isbn)
-        {
-            return TryFormatIsbn(isbn, out string formattedIsbn);
-        }
+            => TryFormatIsbn(isbn, out _);
 
-        public static class Factory
+        public static class DtoFactory
         {
-            public static BookDto CreateDto(string isbn, string author, string title, string description, decimal price)
+            public static BookDto Create(string isbn,
+                                         string author,
+                                         string title,
+                                         string description,
+                                         decimal price)
             {
                 if (TryFormatIsbn(isbn, out string formattedIsbn))
                     isbn = formattedIsbn;
                 else
                     throw new ArgumentException(nameof(isbn));
-
+                
                 if (string.IsNullOrWhiteSpace(title))
                     throw new ArgumentException(nameof(title));
 
@@ -96,16 +98,15 @@ namespace Store
                     Title = title.Trim(),
                     Description = description?.Trim(),
                     Price = price,
-
                 };
             }
         }
 
         public static class Mapper
         {
-            public static Book ToDomain(BookDto dto) => new Book(dto);
+            public static Book Map(BookDto dto) => new Book(dto);
 
-            public static BookDto ToDto(Book domain) => domain.dto;
+            public static BookDto Map(Book domain) => domain.dto;
         }
     }
 }
