@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Store.Web.Models;
 
@@ -14,7 +15,23 @@ namespace Store.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var exceptionHandler = HttpContext.Features
+                                              .Get<IExceptionHandlerFeature>();
+
+            if (exceptionHandler == null)
+                return BadRequest();
+
+            var exception = exceptionHandler.Error;
+
+            if (exception.TargetSite.Name == "ThrowNoElementsException")
+                return NotFound();
+
+            var model = new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+
+            return View(model);
         }
     }
 }
